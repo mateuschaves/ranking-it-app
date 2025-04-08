@@ -1,6 +1,6 @@
 import axios from 'axios'
 import constants from "~/config/consts";
-import { asyncStorage } from '~/shared/storage_service';
+import { asyncStorage, StorageKeys } from '~/shared/storage_service';
 
 export const api = axios.create({
   baseURL: constants.rankingItUrl,
@@ -8,7 +8,7 @@ export const api = axios.create({
 
 api.interceptors.request.use(async (request) => {
   const headers = request.headers ?? {}
-  const token = await asyncStorage.getItem('accessToken')
+  const token = await asyncStorage.getItem(StorageKeys.ACCESS_TOKEN)
 
   if (token) {
     headers.Authorization = `Bearer ${token}`

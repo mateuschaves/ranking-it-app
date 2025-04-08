@@ -1,12 +1,12 @@
 import styled from "styled-components/native";
 import theme from "~/theme";
 
-interface TextTitleProps {
+interface NormalTextProps {
     fontWeight?: typeof theme.weights;
 }
 
-export const TextTitle = styled.Text<TextTitleProps>`
-    font-size: 26px;
+export const NormalText = styled.Text<NormalTextProps>`
+    font-size: 16px;
     font-weight: ${(props) => props.fontWeight || theme.weights.md};
     color: ${(props) => props.theme.colors.darkTint};
     margin-bottom: 16px;

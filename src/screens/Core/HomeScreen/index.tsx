@@ -34,7 +34,7 @@ export default function HomeScreen() {
         <Container>
             <Content>
                 <Row>
-                    <TextTitle fontWeigth={theme.weights.lg}>{`Oi Mateus, \nSeus Rankings`}</TextTitle>
+                    <TextTitle fontWeight={theme.weights.lg}>{`Oi Mateus, \nSeus Rankings`}</TextTitle>
                     <TouchableOpacity onPress={handleCreateRanking}>
                         <PlusCircle
                             size={50}

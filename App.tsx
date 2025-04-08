@@ -25,7 +25,7 @@ export default function App() {
                             );
                         }}>
                             <RootStack />
-                            <Toaster position={'bottom-center'} />
+                            <Toaster position={'bottom-center'} offset={80} />
                         </NavigationContainer>
                     </ThemeProvider>
                 </UserProvider>
