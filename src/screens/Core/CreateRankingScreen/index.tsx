@@ -64,7 +64,7 @@ export default function CreateRankingScreen() {
       description: rankingDescription,
     });
 
-    setFormStep(previusStep => previusStep + 1)
+    setFormStep(previousStep => previousStep + 1)
   }
   
   return (
@@ -80,7 +80,7 @@ export default function CreateRankingScreen() {
             borderWidth={0.5}
           >
           <ProgressStep label="Ranking" removeBtnRow>
-                <TextTitle fontWeigth={theme.weights.lg}>Crie seu ranking</TextTitle>
+                <TextTitle fontWeight={theme.weights.lg}>Crie seu ranking</TextTitle>
                 <TextField placeholder="Ex. Top 10 músicas" value={rankingName} onChangeText={setRankingName} hasError={false} label='Título' />
                 <TextField placeholder="Ex. Músicas preferidas do momento" value={rankingDescription} onChangeText={setRankingDescription} hasError={false} label='Descrição' />
                 <Button title='Criar ranking' iconLeft={<Trophy color={Colors.white} />} onPress={handleCreateRanking} loading={isCreatingRankingLoading}/>
@@ -91,7 +91,7 @@ export default function CreateRankingScreen() {
                 <Button
                     title='Continuar'
                     iconLeft={<PaperPlaneRight color={Colors.white} />}
-                    onPress={() => setFormStep(previusStep => previusStep + 1)}
+                    onPress={() => setFormStep(previousStep => previousStep + 1)}
                 />
             </View>
           </ProgressStep>
