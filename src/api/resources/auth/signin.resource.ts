@@ -10,11 +10,11 @@ export interface SignInWithEmailAndPasswordResponse {
     expiresIn: string;
 }
 
-export async function SignUpWithEmailAndPassword(
+export async function SignInWithEmailAndPassword(
     request: SignInWithEmailAndPasswordRequest,
 ): Promise<SignInWithEmailAndPasswordResponse> {
     return api.post(
         '/user/signin',
         request,
-    )
+    ).then(res => res.data)
 }

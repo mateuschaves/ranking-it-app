@@ -1,5 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+export enum StorageKeys {
+  ACCESS_TOKEN = 'ACCESS_TOKEN'
+}
+
 class StorageService {
   private static instance: StorageService;
 

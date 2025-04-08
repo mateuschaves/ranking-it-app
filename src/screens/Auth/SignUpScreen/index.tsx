@@ -11,8 +11,10 @@ import Button from "~/components/Button";
 import Colors from "~/theme/colors";
 
 export default function SignUpScreen() {
-
-    const handleSignUpByPhone = () => {
+    function handleSignIn() {
+        navigationService.navigate('SignInScreen');
+    }
+    function handleSignUp() {
         navigationService.navigate('SignUpEmailScreen');
     }
 
@@ -25,8 +27,8 @@ export default function SignUpScreen() {
             />
             <Title>{`Entre e comece seu ranking!`}</Title>
             <SignInOptions>
-                <Button onPress={handleSignUpByPhone} iconLeft={<Envelope color={Colors.white} />} title={'Entrar com e-mail'} />
-                <Button onPress={handleSignUpByPhone} title={'Não tenho conta'} variant={'outlined'}/>
+                <Button onPress={handleSignIn} iconLeft={<Envelope color={Colors.white} />} title={'Entrar com e-mail'} />
+                <Button onPress={handleSignUp} title={'Não tenho conta'} variant={'outlined'}/>
             </SignInOptions>
         </Container>
     );

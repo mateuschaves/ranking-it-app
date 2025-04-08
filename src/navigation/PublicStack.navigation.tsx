@@ -1,10 +1,11 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import SignInScreen from '~/screens/Auth/SignUpScreen';
 
 import { RootStackParamList } from './navigation.type';
 import SignUpEmailScreen from '~/screens/Auth/EmailScreen';
 import SignUpPasswordScreen from '~/screens/Auth/PasswordScreen';
+import SignInScreen from '~/screens/Auth/SignInScreen';
+import SignUpScreen from '~/screens/Auth/SignUpScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -15,7 +16,8 @@ function PublicStack() {
         headerTitle: '',
         headerTransparent: true,
       }}>
-        <Stack.Screen name="SignIn" component={SignInScreen} />
+        <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
+        <Stack.Screen name="SignInScreen" component={SignInScreen} />
         <Stack.Screen name="SignUpEmailScreen" component={SignUpEmailScreen} />
         <Stack.Screen name="SignUpPasswordScreen" component={SignUpPasswordScreen} />
       </Stack.Navigator>

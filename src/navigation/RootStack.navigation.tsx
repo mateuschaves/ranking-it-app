@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import PublicStack from './PublicStack.navigation';
 import { PublicStackParamList } from './navigation.type';
 import PrivateStack from './PrivateStack.navigation';
-import {asyncStorage} from "~/shared/storage_service";
+import {asyncStorage, StorageKeys} from "~/shared/storage_service";
 import {useUserContext} from "~/context/UserContext";
 
 const Stack = createNativeStackNavigator<PublicStackParamList>();
@@ -11,7 +11,7 @@ const Stack = createNativeStackNavigator<PublicStackParamList>();
 function RootStack() {
   const { isAuthenticated, setIsAuthenticated } = useUserContext()
   useLayoutEffect(useCallback(() => {
-      asyncStorage.getItem('accessToken').then((accessToken) => {
+      asyncStorage.getItem(StorageKeys.ACCESS_TOKEN).then((accessToken) => {
         if (accessToken) {
           try {
             const decodedToken = JSON.parse(atob(accessToken.split('.')[1]));
