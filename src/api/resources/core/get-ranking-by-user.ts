@@ -1,13 +1,11 @@
 import { api } from '~/lib/axios'
 
 export interface GetRankingsByUserResponse {
-    ranking: {
-        id:          string;
-        name:        string;
-        description: string;
-        photo:       string | null;
-        createdAt:   Date | string;
-    }
+    id:          string;
+    name:        string;
+    description: string;
+    photo:       string | null;
+    createdAt:   Date | string;
 }
 
 export async function GetRankingsByUser(
