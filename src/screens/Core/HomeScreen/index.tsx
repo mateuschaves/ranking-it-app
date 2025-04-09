@@ -9,7 +9,6 @@ import {Row} from "~/components/Row";
 import { useQuery } from '@tanstack/react-query';
 import { QuerieKeys } from '~/api/resources/querie-keys';
 import { GetRankingsByUser } from '~/api/resources/core/get-ranking-by-user';
-import { networking } from 'reactotron-react-native';
 import navigationService from '~/services/navigation.service';
 
 interface Props {
@@ -45,8 +44,8 @@ export default function HomeScreen() {
 
                 <FlatList
                     data={rankings}
-                    keyExtractor={item => item.ranking.id}
-                    renderItem={({item}) => <RankingItem onPress={() => {}} title={item.ranking.name} photo={item.ranking.photo} />}
+                    keyExtractor={item => item.id}
+                    renderItem={({item}) => <RankingItem onPress={() => {}} title={item.name} photo={item.banner} />}
                     showsVerticalScrollIndicator={false}
                 />
             </Content>

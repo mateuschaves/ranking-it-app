@@ -10,13 +10,16 @@ import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
 import theme from '~/theme'
 import Colors from '~/theme/colors'
 import { useMutation } from '@tanstack/react-query'
-import { CreateRanking } from '~/api/resources/core/create-ranking'
+import { CreateRanking, CreateRankingResponse } from '~/api/resources/core/create-ranking'
 import { QuerieKeys } from '~/api/resources/querie-keys'
 import { toast } from 'sonner-native'
 import { View } from 'react-native'
 import ImagePicker from '~/components/ImagePicker'
 import * as ExpoImagePicker from 'expo-image-picker'
 import {hapticFeedback, HapticsType} from '~/utils/feedback'
+import { UploadFile } from '~/api/resources/core/upload-file'
+import { UpdateRanking } from '~/api/resources/core/update-ranking'
+import { UploadFileResponse } from '../../../api/resources/core/upload-file';
 
 export default function CreateRankingScreen() {
   const [rankingName, setRankingName] = useState<string>('')
@@ -24,6 +27,8 @@ export default function CreateRankingScreen() {
   const [image, setImage] = useState<string | null>(null)
   const [loadingImage, setLoadingImage] = useState<boolean>(false)
   const [formStep, setFormStep] = useState<number>(0)
+  const [rankingCreated, setRankingCreated] = useState<CreateRankingResponse>()
+  const [imageUploaded, setImageUploaded] = useState<UploadFileResponse>()
 
   const {
     mutateAsync: CreateRankingFn,
@@ -31,6 +36,30 @@ export default function CreateRankingScreen() {
   } = useMutation({
     mutationFn: CreateRanking,
     mutationKey: [QuerieKeys.CreateRanking],
+    networkMode: 'online',
+    onSuccess: () => {
+      hapticFeedback(HapticsType.SUCCESS)
+    },
+  })
+
+  const {
+    mutateAsync: UploadFileFn,
+    isPending: isUploadingFileLoading,
+  } = useMutation({
+    mutationFn: UploadFile,
+    mutationKey: [QuerieKeys.UploadFile],
+    networkMode: 'online',
+    onSuccess: () => {
+      hapticFeedback(HapticsType.SUCCESS)
+    },
+  })
+
+  const {
+    mutateAsync: UpdateRankingFn,
+    isPending: isUpdatingRankingLoading,
+  } = useMutation({
+    mutationFn: UpdateRanking,
+    mutationKey: [QuerieKeys.UpdateRanking],
     networkMode: 'online',
     onSuccess: () => {
       hapticFeedback(HapticsType.SUCCESS)
@@ -49,6 +78,21 @@ export default function CreateRankingScreen() {
     if (!result.canceled) {
       setImage(result.assets[0].uri);
     }
+
+    if (result.assets && result.assets[0]) {
+      const formData = new FormData();
+      formData.append('attachment', {
+        uri: result.assets[0].uri,
+        name: result.assets[0].fileName || 'image.jpg',
+        type: result.assets[0].type || 'image/jpeg',
+      });
+
+      const imageuploaded = await UploadFileFn(formData);
+
+      setImageUploaded(imageuploaded)
+    }
+
+
     setLoadingImage(false)
     hapticFeedback(HapticsType.SUCCESS)
   }
@@ -59,9 +103,30 @@ export default function CreateRankingScreen() {
       return
     }
 
-    await CreateRankingFn({
+    const ranking = await CreateRankingFn({
       name: rankingName,
       description: rankingDescription,
+    });
+
+    setRankingCreated(ranking)
+
+    setFormStep(previousStep => previousStep + 1)
+  }
+
+  async function handleUpdateRanking() {
+    if (!imageUploaded) {
+      toast.error('Selecione uma imagem')
+      return
+    }
+
+    if (!rankingCreated) {
+      toast.error('Crie um ranking primeiro')
+      return
+    }
+
+    await UpdateRankingFn({
+      bannerId: imageUploaded?.id,
+      rankingId: rankingCreated.id,
     });
 
     setFormStep(previousStep => previousStep + 1)
@@ -87,11 +152,11 @@ export default function CreateRankingScreen() {
           </ProgressStep>
           <ProgressStep label="Foto de capa" removeBtnRow>
             <View>
-                <ImagePicker onPress={openImagePicker} image={image} loading={loadingImage} />
+                <ImagePicker onPress={openImagePicker} image={image} loading={loadingImage || isUploadingFileLoading} />
                 <Button
                     title='Continuar'
                     iconLeft={<PaperPlaneRight color={Colors.white} />}
-                    onPress={() => setFormStep(previousStep => previousStep + 1)}
+                    onPress={handleUpdateRanking}
                 />
             </View>
           </ProgressStep>
