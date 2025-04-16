@@ -12,7 +12,7 @@ export interface ButtonProps {
     iconRight?: React.ReactNode
 }
 
-export default function Button({ onPress, title, loading = false, iconLeft, variant = 'filled' }: ButtonProps) {
+export default function Button({ onPress, title, loading = false, iconLeft, variant = 'filled' , iconRight}: ButtonProps) {
     function performOnPress() {
         if (loading) return;
         onPress();
@@ -23,6 +23,7 @@ export default function Button({ onPress, title, loading = false, iconLeft, vari
             <Show when={!loading}>
                 {iconLeft && iconLeft}
                 <Styles.Text variant={variant}>{title}</Styles.Text>
+                {iconRight && iconRight}
             </Show>
             <Show when={loading}>
                 <Styles.ActivityIndicator />

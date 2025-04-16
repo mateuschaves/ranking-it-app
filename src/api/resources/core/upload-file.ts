@@ -22,5 +22,10 @@ export async function UploadFile(attachment: FormData
     return api.post(
         '/attachments',
         attachment,
+        {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        }
     ).then(res => res.data)
 }

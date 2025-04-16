@@ -14,15 +14,20 @@ export default function RankingItem({ onPress, title, photo}: RankingItemProps) 
 
     return (
                 <Styles.Container onPress={onPress}>
-                        <LinearGradient colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 1)']} style={{flex: 1}}>
-                               <Styles.RankingBanner
-                                   blurRadius={0.5}
-                                   source={{
-                                       uri: photo
-                                   }}
-                               />
-                        </LinearGradient>
-                        <Styles.RankingTitle>{title}</Styles.RankingTitle>
+                    <LinearGradient colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 1)']}>
+                            <Styles.RankingBanner
+                                blurRadius={0.5}
+                                source={{
+                                    uri: photo ? photo : constants.bannerPlaceholder,
+                                    cache: 'force-cache',
+                                    headers: {
+                                            'Cache-Control': 'max-age=604800',
+                                    },
+                                    priority: 'high',
+                                }}
+                            />
+                    </LinearGradient>
+                    <Styles.RankingTitle>{title}</Styles.RankingTitle>
                 </Styles.Container>
     )
 }
