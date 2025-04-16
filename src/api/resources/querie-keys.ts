@@ -5,4 +5,7 @@ export enum QuerieKeys {
   CreateRanking = 'CREATE_RANKING',
   UploadFile = 'UPLOAD_FILE',
   UpdateRanking = 'UPDATE_RANKING',
+  GetRankingCriteriaSuggest = 'GET_RANKING_CRITERIA_SUGGEST',
+  CreateRankingCriteria = 'CREATE_RANKING_CRITERIA',
+  RemoveRankingCriteria = 'REMOVE_RANKING_CRITERIA',
 }
