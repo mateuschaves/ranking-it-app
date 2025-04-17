@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useRef } from 'react';
 import {FlatList, TouchableOpacity, View} from "react-native";
 import {PlusCircle} from 'phosphor-react-native'
 import {Container, Content} from "~/components/BaseScreen";
@@ -10,7 +10,9 @@ import { useQuery } from '@tanstack/react-query';
 import { QuerieKeys } from '~/api/resources/querie-keys';
 import { GetRankingsByUser } from '~/api/resources/core/get-ranking-by-user';
 import navigationService from '~/services/navigation.service';
-import { asyncStorage, StorageKeys } from '~/shared/storage_service';
+import { NormalText } from '~/components/Typography/NormalText';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import BottomSheet, { BottomSheetMethods } from '@devvie/bottom-sheet';
 
 interface Props {
     // Define your props here
@@ -24,6 +26,13 @@ export default function HomeScreen() {
         retry: 2,
     });
 
+    const bottomSheetRef = useRef<BottomSheetMethods>(null);
+
+    const openBottomSheet = (index: number) => {
+        console.log('openBottomSheet', index);
+        bottomSheetRef.current?.open();
+      };
+
     function handleCreateRanking() {
         navigationService.navigate('Home', {
             screen: 'CreateRankingScreen',
@@ -32,24 +41,31 @@ export default function HomeScreen() {
 
     return (
         <Container>
-            <Content>
-                <Row>
-                    <TextTitle fontWeight={theme.weights.lg}>{`Oi Mateus, \nSeus Rankings`}</TextTitle>
-                    <TouchableOpacity onPress={handleCreateRanking}>
-                        <PlusCircle
-                            size={50}
-                            color={theme.colors.darkTint}
-                        />
-                    </TouchableOpacity>
-                </Row>
+            <GestureHandlerRootView>
+                <Content>
+                    <Row>
+                        <TextTitle fontWeight={theme.weights.lg}>{`Oi Mateus, \nSeus Rankings`}</TextTitle>
+                        <TouchableOpacity onPress={handleCreateRanking}>
+                            <PlusCircle
+                                size={50}
+                                color={theme.colors.darkTint}
+                            />
+                        </TouchableOpacity>
+                    </Row>
+                    <FlatList
+                        data={rankings}
+                        keyExtractor={item => item.id}
+                        renderItem={({item}) => <RankingItem onPress={() => {}} onLongPress={() => openBottomSheet(item.id)} title={item.name} photo={item.banner} />}
+                        showsVerticalScrollIndicator={false}
+                    />
 
-                <FlatList
-                    data={rankings}
-                    keyExtractor={item => item.id}
-                    renderItem={({item}) => <RankingItem onPress={() => {}} title={item.name} photo={item.banner} />}
-                    showsVerticalScrollIndicator={false}
-                />
-            </Content>
+                    <BottomSheet ref={bottomSheetRef} containerHeight={300} >
+                        <TouchableOpacity onPress={() => {}}>
+                            <NormalText >Excluir</NormalText>
+                        </TouchableOpacity>
+                    </BottomSheet>
+                </Content>
+            </GestureHandlerRootView>
         </Container>
     );
 };
