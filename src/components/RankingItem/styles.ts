@@ -1,4 +1,5 @@
 import Styled from 'styled-components/native';
+import CachedImage from 'expo-cached-image'
 
 export const Container = Styled.TouchableOpacity`
   flex-direction: column;
@@ -6,7 +7,7 @@ export const Container = Styled.TouchableOpacity`
   margin-bottom: 20px;
 `;
 
-export const RankingBanner = Styled.Image`    
+export const RankingBanner = Styled(CachedImage)`    
     width: 100%;
     height: 100px;
     border-top-left-radius: 10px;

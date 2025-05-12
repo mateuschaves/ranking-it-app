@@ -13,6 +13,7 @@ import navigationService from '~/services/navigation.service';
 import { NormalText } from '~/components/Typography/NormalText';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomSheet, { BottomSheetMethods } from '@devvie/bottom-sheet';
+import { GetRankingsByUserResponse } from '../../../api/resources/core/get-ranking-by-user';
 
 interface Props {
     // Define your props here
@@ -28,14 +29,18 @@ export default function HomeScreen() {
 
     const bottomSheetRef = useRef<BottomSheetMethods>(null);
 
-    const openBottomSheet = (index: number) => {
-        console.log('openBottomSheet', index);
-        bottomSheetRef.current?.open();
-      };
-
     function handleCreateRanking() {
         navigationService.navigate('Home', {
             screen: 'CreateRankingScreen',
+        });
+    }
+
+    function handleDetailRanking(item: GetRankingsByUserResponse) {
+        navigationService.navigate('Home', {
+            screen: 'RankingDetailScreen',
+            params: {
+                item,
+            },
         });
     }
 
@@ -55,7 +60,7 @@ export default function HomeScreen() {
                     <FlatList
                         data={rankings}
                         keyExtractor={item => item.id}
-                        renderItem={({item}) => <RankingItem onPress={() => {}} onLongPress={() => openBottomSheet(item.id)} title={item.name} photo={item.banner} />}
+                        renderItem={({item}) => <RankingItem onPress={() => handleDetailRanking(item)} onLongPress={() => {}} title={item.name} photo={item.banner as string} />}
                         showsVerticalScrollIndicator={false}
                     />
 
