@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { RootStackParamList } from './navigation.type';
 import CreateRankingScreen from '~/screens/Core/CreateRankingScreen';
 import HomeScreen from '~/screens/Core/HomeScreen';
-import Colors from '~/theme/colors';
+import RankingDetailScreen from '~/screens/Core/RankingDetailScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -19,6 +19,7 @@ function RankingNavigation() {
             headerLeft: () => null,
         }} />
         <Stack.Screen name="CreateRankingScreen" component={CreateRankingScreen} />
+        <Stack.Screen name="RankingDetailScreen" component={RankingDetailScreen} />
       </Stack.Navigator>
   );
 }

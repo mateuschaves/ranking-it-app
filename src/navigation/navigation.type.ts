@@ -8,6 +8,7 @@ export type RootStackParamList = {
     HomeScreen: undefined;
     BottomNavigator: undefined;
     CreateRankingScreen: undefined;
+    RankingDetailScreen: undefined;
 }
 
 export type PublicStackParamList = {
