@@ -9,4 +9,5 @@ export enum QuerieKeys {
   CreateRankingCriteria = 'CREATE_RANKING_CRITERIA',
   RemoveRankingCriteria = 'REMOVE_RANKING_CRITERIA',
   GetRankingItems = 'GET_RANKING_ITEMS',
+  GetRankingItemsScores = 'GET_RANKING_ITEMS_SCORES',
 }
