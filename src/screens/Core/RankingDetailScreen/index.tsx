@@ -20,7 +20,6 @@ import Divider from '~/components/Divider';
 import Whitespace from '~/components/Whitespace';
 import Show from '~/components/Standart/Show';
 
-import CachedImage from 'expo-cached-image'
 import constants from '~/config/consts';
 
 const HEADER_MAX_HEIGHT = 300;
@@ -80,10 +79,10 @@ const { data: rankingItems, isLoading, error } = useQuery({
                     <TouchableOpacity key={item.id} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginVertical: 16 }}>
                       <View style={{ flexDirection: 'row', alignItems: 'center'}}>
                         <Show when={!!item?.rankingItemUserPhoto.at(0)?.photo?.uri}>
-                          <Image source={{ uri: item?.rankingItemUserPhoto.at(0)?.photo.uri || '' }}  style={{ width: 30, height: 30, borderRadius: 90,  marginRight: 16 }}/>
+                          <Image source={{ uri: item?.rankingItemUserPhoto.at(0)?.photo?.uri || '' }}  style={{ width: 30, height: 30, borderRadius: 90,  marginRight: 16 }}/>
                         </Show>
                         <NormalText fontWeight={theme.weights.md}>
-                            {++index + '. '}{item.name || 'No title available.'}
+                            {++index + '° '}{item.name || 'No title available.'}{item.score ? ` - ${item.score.toFixed(2)}` : ''}
                         </NormalText>
                       </View>
                         <CaretRight />
