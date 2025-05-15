@@ -12,3 +12,9 @@ export function formatPhoneNumber(value: string) {
     if (phoneNumberLength < 8) return `+55 (${phoneNumber.slice(0, 2)}) ${phoneNumber.slice(2)}`;
     return `+55 (${phoneNumber.slice(0, 2)}) ${phoneNumber.slice(2, 7)}-${phoneNumber.slice(7, 11)}`;
 };
+
+export function captalizeFirstLetter(string: string): string {
+    if (!string) return '';
+    
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}

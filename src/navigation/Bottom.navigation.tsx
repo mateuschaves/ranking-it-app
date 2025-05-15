@@ -4,7 +4,6 @@ import {
 
 import { House, User } from 'phosphor-react-native'
 
-import HomeScreen from "~/screens/Core/HomeScreen";
 import Colors from "~/theme/colors";
 import ProfileScreen from "~/screens/Core/ProfileScreen";
 import RankingNavigation from './Ranking.navigation';
