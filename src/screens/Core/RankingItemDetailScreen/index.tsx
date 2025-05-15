@@ -32,9 +32,6 @@ export default function RankingItemDetailScreen() {
     return acc;
     }, {} as Record<string, GetRankingItemScoresResponse[]>);
 
-    console.log('rankingItemsScoresGroupedByCriteria', JSON.stringify(rankingItemsScoresGroupedByCriteria));
-
-
   return (
     <View style={{ flex: 1, backgroundColor: Colors.background, paddingTop: theme.padding.xl + 20 }}>
         <Content>
