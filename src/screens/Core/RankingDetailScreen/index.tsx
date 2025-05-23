@@ -59,6 +59,7 @@ const { data: rankingItems, isLoading, error } = useQuery({
   function handleClickRankingItem(id: string) {
     navigationService.navigate('RankingItemDetailScreen', {
       rankingItemId: id,
+      rankingId: params.item.id
     });
   }
 
