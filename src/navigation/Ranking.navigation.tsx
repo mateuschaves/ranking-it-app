@@ -6,6 +6,7 @@ import CreateRankingScreen from '~/screens/Core/CreateRankingScreen';
 import HomeScreen from '~/screens/Core/HomeScreen';
 import RankingDetailScreen from '~/screens/Core/RankingDetailScreen';
 import RankingItemDetailScreen from '~/screens/Core/RankingItemDetailScreen';
+import CreateRankingItemScoreScreen from '~/screens/Core/CreateRankingItemScoreScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -23,7 +24,14 @@ function RankingNavigation() {
         <Stack.Screen name="RankingDetailScreen" component={RankingDetailScreen} />
         <Stack.Screen name="RankingItemDetailScreen" component={RankingItemDetailScreen} options={{
           presentation: 'modal',
+          title: 'Pontuação',
+          headerTitle: 'Pontuação',
         }}/>
+        <Stack.Screen name="CreateRankingItemScoreScreen" component={CreateRankingItemScoreScreen} options={{
+          presentation: 'modal',
+          title: 'Adicionar pontuação',
+          headerTitle: 'Adicionar pontuação',
+        }} />
       </Stack.Navigator>
   );
 }
