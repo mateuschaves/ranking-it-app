@@ -24,6 +24,12 @@ class NavigationService {
         }
     }
 
+    goBack() {
+        if (this.navigationRef) {
+            this.navigationRef.goBack();
+        }
+    }
+
     setIndex(index: number) {
         if (this.navigationRef) {
             this.navigationRef.resetRoot({
