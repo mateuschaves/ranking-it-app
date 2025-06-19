@@ -3,6 +3,10 @@ export interface RankingItemDetailScreenProps {
     rankingId: string;
 }
 
+export interface CreateRankingItemScreenProps {
+    rankingId: string;
+}
+
 export type RootStackParamList = {
     SignInScreen: undefined;
     SignUpScreen: undefined;
@@ -16,6 +20,7 @@ export type RootStackParamList = {
     RankingDetailScreen: undefined;
     RankingItemDetailScreen: RankingItemDetailScreenProps;
     CreateRankingItemScoreScreen: RankingItemDetailScreenProps;
+    CreateRankingItemScreen: CreateRankingItemScreenProps;
 }
 
 export type PublicStackParamList = {

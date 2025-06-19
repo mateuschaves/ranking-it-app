@@ -3,6 +3,7 @@ export enum QuerieKeys {
   SigninWithEmailAndPassword = 'SIGNIN_WITH_EMAIL_AND_PASSWORD',
   GetRankingsByUser = 'GET_RANKINGS_BY_USER',
   CreateRanking = 'CREATE_RANKING',
+  CreateRankingItem = 'CREATE_RANKING_ITEM',
   UploadFile = 'UPLOAD_FILE',
   UpdateRanking = 'UPDATE_RANKING',
   GetRankingCriteriaSuggest = 'GET_RANKING_CRITERIA_SUGGEST',
