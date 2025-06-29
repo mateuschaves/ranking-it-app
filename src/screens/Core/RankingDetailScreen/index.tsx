@@ -1,4 +1,4 @@
-import { useRoute } from '@react-navigation/native';
+import { useRoute, RouteProp } from '@react-navigation/native';
 import React, { useRef } from 'react';
 import { GetRankingsByUserResponse } from '~/api/resources/core/get-ranking-by-user';
 import {
@@ -15,15 +15,17 @@ import { NormalText } from '~/components/Typography/NormalText';
 import { useQuery } from '@tanstack/react-query';
 import { GetRankingItems } from '~/api/resources/core/get-ranking-items';
 import { QuerieKeys } from '~/api/resources/querie-keys';
-import { CaretRight, PlusCircle } from 'phosphor-react-native';
+import { CaretRight, PlusCircle, UserPlus } from 'phosphor-react-native';
 import Divider from '~/components/Divider';
 import Whitespace from '~/components/Whitespace';
 import CachedImage from 'expo-cached-image';
 import { ActivityIndicator } from 'react-native';
 import Colors from '~/theme/colors';
+import InviteUserModal from '~/components/InviteUserModal';
 
 import constants from '~/config/consts';
 import navigationService from '~/services/navigation.service';
+import { RootStackParamList } from '~/navigation/navigation.type';
 
 const HEADER_MAX_HEIGHT = 250;
 const HEADER_MIN_HEIGHT = 60;
@@ -31,12 +33,15 @@ const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 
 export default function RankingDetailScreen() {
   const scrollY = useRef(new Animated.Value(0)).current;
+  const [inviteModalVisible, setInviteModalVisible] = React.useState(false);
+  const [inviteLoading, setInviteLoading] = React.useState(false);
 
-  const { params } = useRoute<{ params: { item: GetRankingsByUserResponse } }>();
+  const route = useRoute<RouteProp<RootStackParamList, 'RankingDetailScreen'>>();
+  const { item } = route.params;
 
   const { data: rankingItems } = useQuery({
-    queryKey: [QuerieKeys.GetRankingItems, params.item.id],
-    queryFn: () => GetRankingItems({ id: params.item.id }),
+    queryKey: [QuerieKeys.GetRankingItems, item.id],
+    queryFn: () => GetRankingItems({ id: item.id }),
   });
 
   const headerHeight = scrollY.interpolate({
@@ -60,12 +65,23 @@ export default function RankingDetailScreen() {
   function handleClickRankingItem(id: string) {
     navigationService.navigate('RankingItemDetailScreen', {
       rankingItemId: id,
-      rankingId: params.item.id
+      rankingId: item.id
     });
   }
 
-  const headerImageUri = params.item.banner?.name
-    ? `${constants.bucketUrl}/${params.item.banner.name}`
+  function handleInviteUser(email: string) {
+    setInviteLoading(true);
+    // TODO: Replace with actual invite logic (API call)
+    setTimeout(() => {
+      setInviteLoading(false);
+      setInviteModalVisible(false);
+      // You can use toast.success('Convite enviado!') if you want
+      console.log('Invited user:', email);
+    }, 1000);
+  }
+
+  const headerImageUri = item.banner?.name
+    ? `${constants.bucketUrl}/${item.banner.name}`
     : constants.bannerPlaceholder;
 
   return (
@@ -85,25 +101,33 @@ export default function RankingDetailScreen() {
           <View style={styles.headerContent}>
             <View style={styles.titleContainer}>
               <TextTitle fontWeight={theme.weights.lg}>
-                {params.item.name || 'No title available.'}
+                {item.name || 'No title available.'}
               </TextTitle>
               <NormalText fontWeight={theme.weights.md}>
-                {params.item.description || 'No description available.'}
+                {item.description || 'No description available.'}
               </NormalText>
             </View>
-            <TouchableOpacity
-              style={styles.addButton}
-              onPress={() => {
-                navigationService.navigate('CreateRankingItemScreen', {
-                  rankingId: params.item.id
-                })
-              }}
-            >
-              <PlusCircle
-                size={40}
-                color={theme.colors.darkTint}
-              />
-            </TouchableOpacity>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <TouchableOpacity
+                style={styles.addButton}
+                onPress={() => setInviteModalVisible(true)}
+              >
+                <UserPlus size={40} color={theme.colors.darkTint} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.addButton}
+                onPress={() => {
+                  navigationService.navigate('CreateRankingItemScreen', {
+                    rankingId: item.id
+                  })
+                }}
+              >
+                <PlusCircle
+                  size={40}
+                  color={theme.colors.darkTint}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
 
           <Whitespace space={16} />
@@ -143,10 +167,7 @@ export default function RankingDetailScreen() {
         ]}>
           <CachedImage
             style={styles.headerImage}
-            cachePolicy="memory-disk"
-            cacheControl="immutable"
-            cacheControlExpiry={1000 * 60 * 60 * 24 * 30} // 30 days
-            cacheKey={`ranking-detail-banner-${params.item.banner?.name || 'placeholder'}`}
+            cacheKey={`ranking-detail-banner-${item.banner?.name || 'placeholder'}`}
             placeholderContent={(
               <ActivityIndicator
                 color={Colors.white}
@@ -162,6 +183,13 @@ export default function RankingDetailScreen() {
           />
         </Animated.View>
       </Animated.View>
+
+      <InviteUserModal
+        visible={inviteModalVisible}
+        onClose={() => setInviteModalVisible(false)}
+        onInvite={handleInviteUser}
+        loading={inviteLoading}
+      />
     </View>
   );
 }
