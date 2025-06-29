@@ -31,9 +31,9 @@ import Show from '~/components/Standart/Show'
 import navigationService from '~/services/navigation.service'
 
 interface RankingCriteria {
-  id: string, 
-  name: string, 
-  loading: boolean 
+  id: string,
+  name: string,
+  loading: boolean
 }
 
 export default function CreateRankingScreen() {
@@ -406,31 +406,31 @@ export default function CreateRankingScreen() {
                 </Show>
               </View>
             </View>
-            <View style={{flex: 1, alignContent: 'flex-end', marginTop: 100}}>
-                <Button
-                  title='Finalizar'
-                  iconLeft={<Check color={Colors.white} />}
-                  onPress={() => {
-                    hapticFeedback(HapticsType.SUCCESS)
-                    navigationService.navigate('HomeScreen')
-                  }}
-                  loading={isCreatingRankingLoading}
-                />
+            <View style={{ flex: 1, alignContent: 'flex-end', marginTop: 100 }}>
+              <Button
+                title='Finalizar'
+                iconLeft={<Check color={Colors.white} />}
+                onPress={() => {
+                  hapticFeedback(HapticsType.SUCCESS)
+                  navigationService.navigate('HomeScreen')
+                }}
+                loading={isCreatingRankingLoading}
+              />
             </View>
           </View>
         </ProgressStep>
       </ProgressSteps>
-          <Modal isVisible={isModalVisible} onBackdropPress={() => setIsModalVisible(false)}>
-            <View style={styles.contentContainer}>
-              <TextTitle fontWeight={theme.weights.lg}>Criar novo critério</TextTitle>
-              <TextField placeholder="" value={rankingCriteriaName} onChangeText={setRankingCriteriaName} hasError={false} label='Critério' autoFocus />
-              <Button
-                title='Criar'
-                onPress={() => handleCreateRankingCriteriaCustom(rankingCriteriaName)}
-                loading={isCreatingRankingCriteriaLoading}
-              />
-            </View>
-          </Modal>
+      <Modal isVisible={isModalVisible} onBackdropPress={() => setIsModalVisible(false)}>
+        <View style={styles.contentContainer}>
+          <TextTitle fontWeight={theme.weights.lg}>Criar novo critério</TextTitle>
+          <TextField placeholder="" value={rankingCriteriaName} onChangeText={setRankingCriteriaName} hasError={false} label='Critério' autoFocus />
+          <Button
+            title='Criar'
+            onPress={() => handleCreateRankingCriteriaCustom(rankingCriteriaName)}
+            loading={isCreatingRankingCriteriaLoading}
+          />
+        </View>
+      </Modal>
     </Container>
   )
 }

@@ -1,3 +1,5 @@
+import { GetRankingsByUserResponse } from '~/api/resources/core/get-ranking-by-user';
+
 export interface RankingItemDetailScreenProps {
     rankingItemId: string;
     rankingId: string;
@@ -17,7 +19,9 @@ export type RootStackParamList = {
     HomeScreen: undefined;
     BottomNavigator: undefined;
     CreateRankingScreen: undefined;
-    RankingDetailScreen: undefined;
+    RankingDetailScreen: {
+        item: GetRankingsByUserResponse;
+    };
     RankingItemDetailScreen: RankingItemDetailScreenProps;
     CreateRankingItemScoreScreen: RankingItemDetailScreenProps;
     CreateRankingItemScreen: CreateRankingItemScreenProps;

@@ -1,11 +1,11 @@
 import React, { useMemo, useRef } from 'react';
-import {FlatList, TouchableOpacity, View} from "react-native";
-import {PlusCircle} from 'phosphor-react-native'
-import {Container, Content} from "~/components/BaseScreen";
-import {TextTitle} from "~/components/Typography/TextTitle";
+import { FlatList, TouchableOpacity, View } from "react-native";
+import { PlusCircle } from 'phosphor-react-native'
+import { Container, Content } from "~/components/BaseScreen";
+import { TextTitle } from "~/components/Typography/TextTitle";
 import RankingItem from "~/components/RankingItem";
 import theme from "~/theme";
-import {Row} from "~/components/Row";
+import { Row } from "~/components/Row";
 import { useQuery } from '@tanstack/react-query';
 import { QuerieKeys } from '~/api/resources/querie-keys';
 import { GetRankingsByUser } from '~/api/resources/core/get-ranking-by-user';
@@ -30,17 +30,12 @@ export default function HomeScreen() {
     const bottomSheetRef = useRef<BottomSheetMethods>(null);
 
     function handleCreateRanking() {
-        navigationService.navigate('Home', {
-            screen: 'CreateRankingScreen',
-        });
+        navigationService.navigate('CreateRankingScreen');
     }
 
     function handleDetailRanking(item: GetRankingsByUserResponse) {
-        navigationService.navigate('Home', {
-            screen: 'RankingDetailScreen',
-            params: {
-                item,
-            },
+        navigationService.navigate('RankingDetailScreen', {
+            item,
         });
     }
 
@@ -60,12 +55,12 @@ export default function HomeScreen() {
                     <FlatList
                         data={rankings}
                         keyExtractor={item => item.id}
-                        renderItem={({item}) => <RankingItem onPress={() => handleDetailRanking(item)} onLongPress={() => {}} title={item.name} photo={item.banner as string} />}
+                        renderItem={({ item }) => <RankingItem onPress={() => handleDetailRanking(item)} onLongPress={() => { }} title={item.name} photo={item.banner} />}
                         showsVerticalScrollIndicator={false}
                     />
 
                     <BottomSheet ref={bottomSheetRef} containerHeight={300} >
-                        <TouchableOpacity onPress={() => {}}>
+                        <TouchableOpacity onPress={() => { }}>
                             <NormalText >Excluir</NormalText>
                         </TouchableOpacity>
                     </BottomSheet>
