@@ -12,6 +12,7 @@ import { View, StyleSheet } from 'react-native'
 import { hapticFeedback, HapticsType } from '~/utils/feedback'
 import navigationService from '~/services/navigation.service'
 import { queryClient } from '~/lib/react-query'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 interface CreateRankingItemScreenProps {
     route: {
@@ -24,6 +25,7 @@ interface CreateRankingItemScreenProps {
 export default function CreateRankingItemScreen({ route }: CreateRankingItemScreenProps) {
     const { rankingId } = route.params
     const [itemName, setItemName] = useState<string>('')
+    const insets = useSafeAreaInsets()
 
     const {
         mutateAsync: CreateRankingItemFn,
@@ -69,7 +71,7 @@ export default function CreateRankingItemScreen({ route }: CreateRankingItemScre
     return (
         <Container>
             <Content>
-                <View style={styles.form}>
+                <View style={[styles.form, { paddingBottom: 32 + insets.bottom }]}>
                     <TextField
                         label="Nome do Item"
                         placeholder="Digite o nome do item"

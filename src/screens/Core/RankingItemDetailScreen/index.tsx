@@ -1,4 +1,4 @@
-import { View, Image, Text, ScrollView, TouchableOpacity } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { Content } from '~/components/BaseScreen'
 import Colors from '~/theme/colors'
@@ -12,6 +12,8 @@ import { getImageUrl } from '~/utils/image'
 import { captalizeFirstLetter } from '~/utils/general'
 import { PlusCircle } from 'phosphor-react-native'
 import navigationService from '~/services/navigation.service'
+import CachedImage from 'expo-cached-image'
+import { ActivityIndicator } from 'react-native'
 
 export default function RankingItemDetailScreen() {
     const { params } = useRoute<RouteProp<RootStackParamList, 'RankingItemDetailScreen'>>();
@@ -24,14 +26,14 @@ export default function RankingItemDetailScreen() {
         retry: 2,
     })
 
-  const rankingItemsScoresGroupedByCriteria = rankingItemScores?.reduce((acc, item) => {
-    const criteriaId = item.rankingCriteria.id;
-    if (!acc[criteriaId]) {
-      acc[criteriaId] = [];
-    }
+    const rankingItemsScoresGroupedByCriteria = rankingItemScores?.reduce((acc, item) => {
+        const criteriaId = item.rankingCriteria.id;
+        if (!acc[criteriaId]) {
+            acc[criteriaId] = [];
+        }
 
-    acc[criteriaId].push(item);
-    return acc;
+        acc[criteriaId].push(item);
+        return acc;
     }, {} as Record<string, GetRankingItemScoresResponse[]>);
 
 
@@ -42,77 +44,102 @@ export default function RankingItemDetailScreen() {
         })
     }
 
-  return (
-    <View style={{ flex: 1, backgroundColor: Colors.background, paddingTop: theme.padding.xl + 20 }}>
+    return (
         <Content>
-            <View style={{
-                flexDirection: 'row-reverse',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: theme.margin.xl,
-            }}>
-                <TouchableOpacity onPress={handleClickRankingItem}>
-                    <PlusCircle
-                        size={40}
-                        color={theme.colors.darkTint}
-                    />
-                </TouchableOpacity>
-            </View>
-            <ScrollView>
-                {rankingItemsScoresGroupedByCriteria && Object.keys(rankingItemsScoresGroupedByCriteria).map((criteriaId) => (
-                    <View key={criteriaId}>
-                        <Text style={{
-                            fontSize: 18,
-                            fontWeight: '600',
-                            color: Colors.darkTint,
-                            marginBottom: theme.margin.sm,
-                        }}>{captalizeFirstLetter(rankingItemsScoresGroupedByCriteria[criteriaId][0].rankingCriteria.name)}</Text>
-                        {rankingItemsScoresGroupedByCriteria[criteriaId].map((item) => (
-                            <View
-                                key={item.id}
-                                style={{
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                    padding: theme.padding.sm,
-                                    backgroundColor: Colors.white,
-                                    borderRadius: 8,
-                                    marginBottom: theme.margin.sm,
-                                }}
-                            >
+            <ScrollView showsVerticalScrollIndicator={false}>
+                {rankingItemsScoresGroupedByCriteria &&
+                    Object.keys(rankingItemsScoresGroupedByCriteria).map((criteriaId) => (
+                        <View key={criteriaId} style={{ marginBottom: theme.margin.lg }}>
+                            <Text style={{ fontSize: theme.text.lg, fontWeight: theme.weights.lg, marginBottom: theme.margin.sm }}>
+                                {captalizeFirstLetter(rankingItemsScoresGroupedByCriteria[criteriaId][0].rankingCriteria.name)}
+                            </Text>
+
+                            {rankingItemsScoresGroupedByCriteria[criteriaId].map((item) => (
                                 <View
+                                    key={item.id}
                                     style={{
-                                        width: 35,
-                                        height: 35,
-                                        borderRadius: 20,
-                                        backgroundColor: Colors.tint,
-                                        justifyContent: 'center',
+                                        flexDirection: 'row',
                                         alignItems: 'center',
-                                        marginRight: theme.margin.sm,
-                                        overflow: 'hidden',
+                                        padding: theme.padding.sm,
+                                        backgroundColor: Colors.white,
+                                        borderRadius: 8,
+                                        marginBottom: theme.margin.sm,
                                     }}
                                 >
-                                    {item.user.avatar.path ? (
-                                        <Image
-                                            source={{ uri: getImageUrl(item.user.avatar.path) }}
-                                            style={{ width: 40, height: 40, borderRadius: 20 }}
-                                            resizeMode="cover"
-                                        />
-                                    ) : (
-                                        <Text>{item.user.name[0]}</Text>
-                                    )}
+                                    <View
+                                        style={{
+                                            width: 35,
+                                            height: 35,
+                                            borderRadius: 20,
+                                            backgroundColor: Colors.tint,
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            marginRight: theme.margin.sm,
+                                            overflow: 'hidden',
+                                        }}
+                                    >
+                                        {item.user.avatar.path ? (
+                                            <CachedImage
+                                                source={{ uri: getImageUrl(item.user.avatar.path) }}
+                                                style={{ width: 40, height: 40, borderRadius: 20 }}
+                                                cachePolicy="memory-disk"
+                                                cacheControl="immutable"
+                                                cacheControlExpiry={1000 * 60 * 60 * 24 * 30} // 30 days
+                                                cacheKey={`user-avatar-${item.user.id}`}
+                                                placeholderContent={(
+                                                    <ActivityIndicator
+                                                        color={Colors.white}
+                                                        size="small"
+                                                    />
+                                                )}
+                                                resizeMode="cover"
+                                                onError={(error: any) => {
+                                                    console.warn('Avatar loading error:', error);
+                                                }}
+                                            />
+                                        ) : (
+                                            <Text>{item.user.name[0]}</Text>
+                                        )}
+                                    </View>
+
+                                    <View style={{ flex: 1 }}>
+                                        <Text style={{ fontSize: theme.text.md, fontWeight: theme.weights.md }}>
+                                            {item.user.name}
+                                        </Text>
+                                    </View>
+
+                                    <Text style={{ fontSize: theme.text.lg, fontWeight: theme.weights.lg }}>
+                                        {item.score}
+                                    </Text>
                                 </View>
-                                <View>
-                                    <Text style={{
-                                        fontSize: 16,
-                                        color: Colors.darkTint,
-                                    }}>{captalizeFirstLetter(item.score.toFixed(2))}</Text>
-                                </View>
-                            </View>
-                        ))}
+                            ))}
+                        </View>
+                    ))}
+
+                {(!rankingItemsScoresGroupedByCriteria || Object.keys(rankingItemsScoresGroupedByCriteria).length === 0) && (
+                    <View style={{ alignItems: 'center', paddingVertical: 40 }}>
+                        <Text style={{ fontSize: theme.text.md, textAlign: 'center', marginBottom: theme.margin.lg }}>
+                            Nenhuma pontuação adicionada ainda.
+                        </Text>
+                        <TouchableOpacity
+                            onPress={handleClickRankingItem}
+                            style={{
+                                backgroundColor: Colors.darkTint,
+                                paddingHorizontal: theme.padding.lg,
+                                paddingVertical: theme.padding.md,
+                                borderRadius: 8,
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                            }}
+                        >
+                            <PlusCircle size={20} color={Colors.white} style={{ marginRight: 8 }} />
+                            <Text style={{ color: Colors.white, fontSize: theme.text.md }}>
+                                Adicionar pontuação
+                            </Text>
+                        </TouchableOpacity>
                     </View>
-                ))}
+                )}
             </ScrollView>
         </Content>
-    </View>
-  )
+    )
 }
