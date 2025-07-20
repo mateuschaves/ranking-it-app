@@ -14,12 +14,14 @@ import { NormalText } from '~/components/Typography/NormalText';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomSheet, { BottomSheetMethods } from '@devvie/bottom-sheet';
 import { GetRankingsByUserResponse } from '../../../api/resources/core/get-ranking-by-user';
+import { useUserContext } from '~/context/UserContext';
 
 interface Props {
     // Define your props here
 }
 
 export default function HomeScreen() {
+    const { user } = useUserContext();
     const { data: rankings, isLoading, error } = useQuery({
         queryKey: [QuerieKeys.GetRankingsByUser],
         queryFn: GetRankingsByUser,
@@ -44,7 +46,7 @@ export default function HomeScreen() {
             <GestureHandlerRootView>
                 <Content>
                     <Row>
-                        <TextTitle fontWeight={theme.weights.lg}>{`Oi Mateus, \nSeus Rankings`}</TextTitle>
+                        <TextTitle fontWeight={theme.weights.lg}>{`Oi${user?.name ? ' ' + user.name : ''},\nSeus Rankings`}</TextTitle>
                         <TouchableOpacity onPress={handleCreateRanking}>
                             <PlusCircle
                                 size={50}
@@ -57,6 +59,16 @@ export default function HomeScreen() {
                         keyExtractor={item => item.id}
                         renderItem={({ item }) => <RankingItem onPress={() => handleDetailRanking(item)} onLongPress={() => { }} title={item.name} photo={item.banner} />}
                         showsVerticalScrollIndicator={false}
+                        ListEmptyComponent={
+                            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', minHeight: 280 }}>
+                                <TextTitle fontWeight={theme.weights.md} style={{ textAlign: 'center', marginBottom: 6, fontSize: 18 }}>
+                                    Nenhum ranking encontrado
+                                </TextTitle>
+                                <NormalText style={{ textAlign: 'center', color: theme.colors.textHiglight, fontSize: 14 }}>
+                                    Crie seu primeiro ranking usando o botão + abaixo!
+                                </NormalText>
+                            </View>
+                        }
                     />
 
                     <BottomSheet ref={bottomSheetRef} containerHeight={300} >
