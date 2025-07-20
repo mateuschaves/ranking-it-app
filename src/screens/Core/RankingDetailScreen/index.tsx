@@ -22,6 +22,9 @@ import CachedImage from 'expo-cached-image';
 import { ActivityIndicator } from 'react-native';
 import Colors from '~/theme/colors';
 import InviteUserModal from '~/components/InviteUserModal';
+import { InviteUserToRanking } from '~/api/resources/core/invite-user-to-ranking';
+import { showToast, hapticFeedback, HapticsType } from '~/utils/feedback';
+import { useMutation } from '@tanstack/react-query';
 
 import constants from '~/config/consts';
 import navigationService from '~/services/navigation.service';
@@ -34,7 +37,6 @@ const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 export default function RankingDetailScreen() {
   const scrollY = useRef(new Animated.Value(0)).current;
   const [inviteModalVisible, setInviteModalVisible] = React.useState(false);
-  const [inviteLoading, setInviteLoading] = React.useState(false);
 
   const route = useRoute<RouteProp<RootStackParamList, 'RankingDetailScreen'>>();
   const { item } = route.params;
@@ -69,15 +71,25 @@ export default function RankingDetailScreen() {
     });
   }
 
-  function handleInviteUser(email: string) {
-    setInviteLoading(true);
-    // TODO: Replace with actual invite logic (API call)
-    setTimeout(() => {
-      setInviteLoading(false);
+  const {
+    mutateAsync: inviteUserToRankingFn,
+    isPending: isInviteLoading,
+  } = useMutation({
+    mutationFn: InviteUserToRanking,
+    mutationKey: [QuerieKeys.InviteUserToRanking, item.id],
+    onSuccess: () => {
       setInviteModalVisible(false);
-      // You can use toast.success('Convite enviado!') if you want
-      console.log('Invited user:', email);
-    }, 1000);
+      showToast({ type: 'success', title: 'Convite enviado com sucesso!' });
+      hapticFeedback(HapticsType.SUCCESS);
+    },
+    onError: () => {
+      showToast({ type: 'error', title: 'Erro ao enviar convite. Tente novamente.' });
+      hapticFeedback(HapticsType.ERROR);
+    },
+  });
+
+  async function handleInviteUser(email: string) {
+    await inviteUserToRankingFn({ email, rankingId: item.id });
   }
 
   const headerImageUri = item.banner?.name
@@ -188,7 +200,8 @@ export default function RankingDetailScreen() {
         visible={inviteModalVisible}
         onClose={() => setInviteModalVisible(false)}
         onInvite={handleInviteUser}
-        loading={inviteLoading}
+        loading={isInviteLoading}
+        onSuccess={() => { }}
       />
     </View>
   );

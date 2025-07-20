@@ -11,9 +11,10 @@ interface InviteUserModalProps {
     onClose: () => void;
     onInvite: (email: string) => void;
     loading?: boolean;
+    onSuccess?: () => void;
 }
 
-export default function InviteUserModal({ visible, onClose, onInvite, loading }: InviteUserModalProps) {
+export default function InviteUserModal({ visible, onClose, onInvite, loading, onSuccess }: InviteUserModalProps) {
     const [email, setEmail] = useState('');
     const [error, setError] = useState('');
 
@@ -25,6 +26,21 @@ export default function InviteUserModal({ visible, onClose, onInvite, loading }:
         setError('');
         onInvite(email.trim());
     }
+
+    React.useEffect(() => {
+        if (!visible && email) {
+            setEmail('');
+            setError('');
+        }
+    }, [visible]);
+
+    React.useEffect(() => {
+        if (onSuccess) {
+            onSuccess();
+            setEmail('');
+            setError('');
+        }
+    }, [onSuccess]);
 
     function handleClose() {
         setEmail('');
@@ -60,7 +76,6 @@ export default function InviteUserModal({ visible, onClose, onInvite, loading }:
                         title={loading ? 'Enviando...' : 'Enviar convite'}
                         onPress={handleInvite}
                         loading={loading}
-                        style={styles.button}
                     />
                     <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
                         <NormalText style={styles.closeText}>Cancelar</NormalText>
