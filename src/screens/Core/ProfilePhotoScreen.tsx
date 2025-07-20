@@ -7,11 +7,16 @@ import * as ExpoImagePicker from 'expo-image-picker';
 import Button from '~/components/Button';
 import Colors from '~/theme/colors';
 import { Camera, X } from 'phosphor-react-native';
+import { UploadFile } from '~/api/resources/core/upload-file';
+import { updateUserAvatar } from '~/api/resources/core/update-user-avatar';
+import { useQueryClient } from '@tanstack/react-query';
+import { showToast, hapticFeedback, HapticsType } from '~/utils/feedback';
 
 export default function ProfilePhotoScreen() {
     const [image, setImage] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const navigation = useNavigation();
+    const queryClient = useQueryClient();
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -41,8 +46,28 @@ export default function ProfilePhotoScreen() {
         setLoading(false);
     }
 
-    function handleSave() {
-        Alert.alert('Foto de perfil', 'Salvar foto de perfil (implementar upload)');
+    async function handleSave() {
+        if (!image) return;
+        try {
+            setLoading(true);
+            const formData = new FormData();
+            formData.append('attachment', {
+                uri: image,
+                name: 'avatar.jpg',
+                type: 'image/jpeg',
+            } as any);
+            const uploadRes = await UploadFile(formData);
+            await updateUserAvatar({ avatarId: uploadRes.id });
+            await queryClient.invalidateQueries({ queryKey: ['user-profile'] });
+            setLoading(false);
+            showToast({ type: 'success', title: 'Foto de perfil atualizada!' });
+            hapticFeedback(HapticsType.SUCCESS);
+            navigation.goBack();
+        } catch (err) {
+            setLoading(false);
+            showToast({ type: 'error', title: 'Não foi possível atualizar sua foto de perfil.' });
+            hapticFeedback(HapticsType.ERROR);
+        }
     }
 
     return (
@@ -82,7 +107,7 @@ export default function ProfilePhotoScreen() {
             </View>
             {image && (
                 <View style={styles.saveButton}>
-                    <Button title="Salvar" onPress={handleSave} />
+                    <Button title={'Salvar'} onPress={handleSave} loading={loading} />
                 </View>
             )}
         </Container>
