@@ -5,6 +5,7 @@ export interface GetUserProfileResponse {
   name: string;
   email: string;
   avatarId: string;
+  avatarUrl?: string;
   createdAt: string;
   pendingInvitesCount: number;
 }

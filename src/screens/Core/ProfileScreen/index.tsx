@@ -14,6 +14,7 @@ import { useUserContext } from '~/context/UserContext';
 import navigationService from '~/services/navigation.service';
 import { useQuery } from '@tanstack/react-query';
 import { getUserProfile, GetUserProfileResponse } from '~/api/resources/core/get-user-profile';
+import constants from '~/config/consts';
 
 const AVATAR_BASE_URL = 'https://ranking-attachments.s3.us-east-1.amazonaws.com/';
 
@@ -70,16 +71,24 @@ export default function ProfileScreen() {
         );
     }
 
-    const avatarUrl = userContext?.avatarId ? `${AVATAR_BASE_URL}${userContext.avatarId}` : undefined;
+    let avatarUrl = '';
+    if (userContext?.avatarUrl) {
+        avatarUrl = userContext.avatarUrl.startsWith('http')
+            ? userContext.avatarUrl
+            : `${constants.bucketUrl.replace('http://', 'https://')}/${userContext.avatarUrl}`;
+    } else if (userContext?.avatarId) {
+        avatarUrl = `${constants.bucketUrl.replace('http://', 'https://')}/${userContext.avatarId}`;
+    }
 
     return (
         <Container style={[styles.container, { flex: 1 }]}>
             <View style={styles.header}>
                 <View style={styles.avatarWrapper}>
-                    {avatarUrl ? (
+                    {userContext?.avatarId ? (
                         <Image
                             source={{ uri: avatarUrl }}
                             style={styles.avatar}
+                            resizeMode="cover"
                         />
                     ) : (
                         <CachedImage
