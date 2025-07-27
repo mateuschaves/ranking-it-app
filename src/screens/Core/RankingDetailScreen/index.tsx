@@ -10,18 +10,16 @@ import {
   ScrollView,
 } from 'react-native';
 import { TextTitle } from '~/components/Typography/TextTitle';
-import theme from '~/theme';
 import { NormalText } from '~/components/Typography/NormalText';
 import { useQuery } from '@tanstack/react-query';
 import { GetRankingItems } from '~/api/resources/core/get-ranking-items';
 import { QuerieKeys } from '~/api/resources/querie-keys';
-import { CaretRight, PlusCircle, UserPlus } from 'phosphor-react-native';
-import Divider from '~/components/Divider';
+import { CaretRight, PlusCircle, UserPlus, Star, Trophy } from 'phosphor-react-native';
 import Whitespace from '~/components/Whitespace';
 import CachedImage from 'expo-cached-image';
 import { ActivityIndicator } from 'react-native';
 import Colors from '~/theme/colors';
-import InviteUserModal from '~/components/InviteUserModal';
+import InviteUserActionSheet from '~/components/InviteUserActionSheet/index';
 import { InviteUserToRanking } from '~/api/resources/core/invite-user-to-ranking';
 import { showToast, hapticFeedback, HapticsType } from '~/utils/feedback';
 import { useMutation } from '@tanstack/react-query';
@@ -30,7 +28,7 @@ import constants from '~/config/consts';
 import navigationService from '~/services/navigation.service';
 import { RootStackParamList } from '~/navigation/navigation.type';
 
-const HEADER_MAX_HEIGHT = 250;
+const HEADER_MAX_HEIGHT = 280;
 const HEADER_MIN_HEIGHT = 60;
 const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 
@@ -54,13 +52,19 @@ export default function RankingDetailScreen() {
 
   const headerOpacity = scrollY.interpolate({
     inputRange: [0, HEADER_SCROLL_DISTANCE / 2, HEADER_SCROLL_DISTANCE],
-    outputRange: [1, 0.7, 0.3],
+    outputRange: [1, 0.8, 0.4],
     extrapolate: 'clamp',
   });
 
   const imageTranslate = scrollY.interpolate({
     inputRange: [0, HEADER_SCROLL_DISTANCE],
-    outputRange: [0, -30],
+    outputRange: [0, -40],
+    extrapolate: 'clamp',
+  });
+
+  const titleOpacity = scrollY.interpolate({
+    inputRange: [0, HEADER_SCROLL_DISTANCE / 2, HEADER_SCROLL_DISTANCE],
+    outputRange: [1, 0.9, 0.6],
     extrapolate: 'clamp',
   });
 
@@ -110,68 +114,108 @@ export default function RankingDetailScreen() {
         bounces={true}
       >
         <View style={styles.content}>
-          <View style={styles.headerContent}>
-            <View style={styles.titleContainer}>
-              <TextTitle fontWeight={theme.weights.lg}>
-                {item.name || 'No title available.'}
-              </TextTitle>
-              <NormalText fontWeight={theme.weights.md}>
-                {item.description || 'No description available.'}
-              </NormalText>
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <TouchableOpacity
-                style={styles.addButton}
-                onPress={() => setInviteModalVisible(true)}
-              >
-                <UserPlus size={40} color={theme.colors.darkTint} />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.addButton}
-                onPress={() => {
-                  navigationService.navigate('CreateRankingItemScreen', {
-                    rankingId: item.id
-                  })
-                }}
-              >
-                <PlusCircle
-                  size={40}
-                  color={theme.colors.darkTint}
-                />
-              </TouchableOpacity>
-            </View>
+          {/* Title Section */}
+          <View style={styles.titleSection}>
+            <TextTitle style={styles.contentTitle}>
+              {item.name || 'Sem título'}
+            </TextTitle>
+            <NormalText style={styles.contentDescription}>
+              {item.description || 'Sem descrição'}
+            </NormalText>
           </View>
 
-          <Whitespace space={16} />
-
-          {rankingItems?.map((item, index) => (
-            <View key={item.id}>
-              <TouchableOpacity
-                style={styles.itemContainer}
-                onPress={() => handleClickRankingItem(item.id)}
-                activeOpacity={0.7}
-              >
-                <View style={styles.itemContent}>
-                  <NormalText fontWeight={theme.weights.md}>
-                    {index + 1}° {item.name || 'No title available.'}
-                  </NormalText>
-                </View>
-                <CaretRight size={20} color={theme.colors.darkTint} />
-              </TouchableOpacity>
-              <Divider />
-            </View>
-          ))}
-
-          {(!rankingItems || rankingItems.length === 0) && (
-            <View style={styles.emptyState}>
-              <NormalText fontWeight={theme.weights.md}>
-                Nenhum item adicionado ainda. Clique no + para adicionar o primeiro item!
+          {/* Actions Section */}
+          <View style={styles.actionsSection}>
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={() => setInviteModalVisible(true)}
+              activeOpacity={0.8}
+            >
+              <UserPlus size={18} color={Colors.darkTint} weight="bold" />
+              <NormalText style={styles.actionButtonText}>
+                Convidar
               </NormalText>
-            </View>
-          )}
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.actionButton, styles.primaryActionButton]}
+              onPress={() => {
+                navigationService.navigate('CreateRankingItemScreen', {
+                  rankingId: item.id
+                })
+              }}
+              activeOpacity={0.8}
+            >
+              <PlusCircle size={18} color={Colors.white} weight="bold" />
+              <NormalText style={[styles.actionButtonText, styles.primaryActionButtonText]}>
+                Adicionar
+              </NormalText>
+            </TouchableOpacity>
+          </View>
+
+          <Whitespace space={24} />
+
+          {/* Items Section */}
+          <View style={styles.itemsSection}>
+            <TextTitle style={styles.sectionTitle}>
+              Itens do Ranking
+            </TextTitle>
+
+            {rankingItems?.map((rankingItem, index) => (
+              <TouchableOpacity
+                key={rankingItem.id}
+                style={styles.itemCard}
+                onPress={() => handleClickRankingItem(rankingItem.id)}
+                activeOpacity={0.8}
+              >
+                <View style={styles.itemHeader}>
+                  <View style={styles.positionBadge}>
+                    <NormalText style={styles.positionText}>
+                      {index + 1}º
+                    </NormalText>
+                  </View>
+
+                  <View style={styles.itemInfo}>
+                    <TextTitle style={styles.itemName}>
+                      {rankingItem.name || 'Sem nome'}
+                    </TextTitle>
+                    {rankingItem.description && (
+                      <NormalText style={styles.itemDescription}>
+                        {rankingItem.description}
+                      </NormalText>
+                    )}
+                  </View>
+
+                  <View style={styles.itemScore}>
+                    <Star size={16} color={Colors.darkTint} weight="fill" />
+                    <NormalText style={styles.scoreText}>
+                      {rankingItem.score ? rankingItem.score.toFixed(1) : '0.0'}
+                    </NormalText>
+                  </View>
+
+                  <CaretRight size={20} color={Colors.darkTint} weight="bold" />
+                </View>
+              </TouchableOpacity>
+            ))}
+
+            {(!rankingItems || rankingItems.length === 0) && (
+              <View style={styles.emptyState}>
+                <View style={styles.emptyIconContainer}>
+                  <Trophy size={64} color={Colors.textHiglight} weight="light" />
+                </View>
+                <TextTitle style={styles.emptyTitle}>
+                  Nenhum item ainda
+                </TextTitle>
+                <NormalText style={styles.emptySubtitle}>
+                  Adicione o primeiro item ao ranking para começar!
+                </NormalText>
+              </View>
+            )}
+          </View>
         </View>
       </ScrollView>
 
+      {/* Header */}
       <Animated.View style={[styles.header, { height: headerHeight }]}>
         <Animated.View style={[
           styles.headerImageContainer,
@@ -193,15 +237,15 @@ export default function RankingDetailScreen() {
               console.warn('Header image loading error:', error);
             }}
           />
+          <View style={styles.headerOverlay} />
         </Animated.View>
       </Animated.View>
 
-      <InviteUserModal
+      <InviteUserActionSheet
         visible={inviteModalVisible}
         onClose={() => setInviteModalVisible(false)}
         onInvite={handleInviteUser}
         loading={isInviteLoading}
-        onSuccess={() => { }}
       />
     </View>
   );
@@ -210,43 +254,147 @@ export default function RankingDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: Colors.background,
   },
   scrollView: {
     flex: 1,
   },
   content: {
-    padding: 16,
-    paddingBottom: 120, // Add extra padding to account for bottom navigation
+    paddingHorizontal: 16,
+    paddingBottom: 120,
   },
-  headerContent: {
+  titleSection: {
+    marginBottom: 24,
+    marginTop: 16,
+  },
+  contentTitle: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: Colors.darkTint,
+    marginBottom: 8,
+  },
+  contentDescription: {
+    fontSize: 16,
+    color: Colors.textHiglight,
+    lineHeight: 22,
+  },
+  actionsSection: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    marginBottom: theme.margin.xl
+    gap: 8,
+    marginBottom: 8,
   },
-  titleContainer: {
+  actionButton: {
     flex: 1,
-    marginRight: 16,
-  },
-  addButton: {
-    padding: 8,
-  },
-  itemContainer: {
+    backgroundColor: Colors.background,
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 16,
-    paddingHorizontal: 8,
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: Colors.darkTint,
   },
-  itemContent: {
+  primaryActionButton: {
+    backgroundColor: Colors.darkTint,
+    borderColor: Colors.darkTint,
+  },
+  actionButtonText: {
+    color: Colors.darkTint,
+    fontSize: 14,
+    fontWeight: '600',
+    marginLeft: 6,
+  },
+  primaryActionButtonText: {
+    color: Colors.white,
+  },
+  itemsSection: {
+    marginTop: 8,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: Colors.darkTint,
+    marginBottom: 16,
+  },
+  itemCard: {
+    backgroundColor: Colors.white,
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 3,
+  },
+  itemHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  positionBadge: {
+    backgroundColor: Colors.darkTint,
+    borderRadius: 20,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    marginRight: 16,
+    minWidth: 40,
+    alignItems: 'center',
+  },
+  positionText: {
+    color: Colors.white,
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  itemInfo: {
     flex: 1,
     marginRight: 16,
+  },
+  itemName: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: Colors.darkTint,
+    marginBottom: 4,
+  },
+  itemDescription: {
+    fontSize: 14,
+    color: Colors.textHiglight,
+    lineHeight: 18,
+  },
+  itemScore: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.background,
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    marginRight: 12,
+  },
+  scoreText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: Colors.darkTint,
+    marginLeft: 4,
   },
   emptyState: {
     alignItems: 'center',
-    paddingVertical: 40,
-    paddingHorizontal: 20,
+    paddingVertical: 60,
+  },
+  emptyIconContainer: {
+    marginBottom: 24,
+  },
+  emptyTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: Colors.darkTint,
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  emptySubtitle: {
+    fontSize: 16,
+    color: Colors.textHiglight,
+    textAlign: 'center',
+    lineHeight: 22,
   },
   header: {
     position: 'absolute',
@@ -264,5 +412,13 @@ const styles = StyleSheet.create({
   headerImage: {
     width: Dimensions.get('window').width,
     height: HEADER_MAX_HEIGHT,
+  },
+  headerOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
   },
 });
