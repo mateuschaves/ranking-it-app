@@ -45,6 +45,8 @@ function RankingNavigation() {
         headerLeft: () => <CustomBackButton />,
       }} />
       <Stack.Screen name="CreateRankingItemScreen" component={CreateRankingItemScreen} options={{
+        headerBackVisible: false,
+        headerLeft: () => <CustomBackButton />,
         title: 'Adicionar Item',
         headerTitle: 'Adicionar Item',
       }} />

@@ -3,6 +3,7 @@ import { api } from '~/lib/axios'
 export interface CreateRankingItemRequest {
     name:           string;
     rankingId:      string;
+    imageIds?:      string[];
 }
 
 export interface CreateRankingItemResponse {
@@ -24,6 +25,7 @@ export async function CreateRankingItem(request: CreateRankingItemRequest): Prom
         `/rankings/${request.rankingId}/items`,
         {
             name: request.name,
+            imageIds: request.imageIds,
         },
     ).then(res => res.data)
 }
