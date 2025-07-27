@@ -5,5 +5,5 @@ export function getImageUrl(imageName: string | null | undefined): string {
         return '';
     }
 
-    return `${constants.bucketUrl}/${imageName}`;
+    return `${imageName}`;
 }

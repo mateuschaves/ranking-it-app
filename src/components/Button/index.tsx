@@ -27,7 +27,7 @@ export default function Button({ onPress, title, loading = false, iconLeft, vari
                 {iconRight && iconRight}
             </Show>
             <Show when={loading}>
-                <Styles.ActivityIndicator color={Colors.darkTint} />
+                <Styles.ActivityIndicator color={variant === 'filled' ? Colors.white : Colors.darkTint} />
             </Show>
         </Styles.Container>
     )

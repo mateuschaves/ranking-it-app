@@ -6,13 +6,30 @@ export interface UserInvite {
   createdAt: string;
   inviterName: string;
   inviterAvatarPath: string | null;
+  ranking: {
+    id: string;
+    name: string;
+    description: string;
+    banner: any;
+    rankingCriteria: Array<{
+      name: string;
+    }>;
+    criteria: string[];
+  };
 }
 
 interface ApiInvite {
   id: string;
   createdAt: string;
   ranking: {
+    id: string;
     name: string;
+    description: string;
+    banner: any;
+    rankingCriteria: Array<{
+      name: string;
+    }>;
+    criteria: string[];
   };
   invitedBy: {
     name: string;
@@ -35,5 +52,6 @@ export async function getAllUserInvites(): Promise<UserInvite[]> {
     createdAt: invite.createdAt,
     inviterName: invite.invitedBy.name,
     inviterAvatarPath: invite.invitedBy.avatar?.url || null,
+    ranking: invite.ranking,
   }));
 } 

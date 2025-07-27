@@ -4,7 +4,7 @@ import { Container } from '~/components/BaseScreen';
 import { TextTitle } from '~/components/Typography/TextTitle';
 import { NormalText } from '~/components/Typography/NormalText';
 import OptimizedCachedImage from '~/components/CachedImage';
-import { User, Calendar, Check, X, Users } from 'phosphor-react-native';
+import { User, Calendar, Check, X, Users, Star } from 'phosphor-react-native';
 import { acceptInvite } from '~/api/resources/core/accept-invite';
 import { declineInvite } from '~/api/resources/core/decline-invite';
 import { showToast } from '~/utils/feedback';
@@ -18,9 +18,12 @@ import { QuerieKeys } from '~/api/resources/querie-keys';
 
 export default function UserPendingInvitesScreen() {
     const queryClient = useQueryClient();
-    const { data: invites, isLoading, refetch } = useQuery({
+    const { data: invites, isLoading, refetch } = useQuery<UserInvite[]>({
         queryKey: ['user-pending-invites'],
         queryFn: getAllUserInvites,
+        retry: 2,
+        retryDelay: 1000,
+        staleTime: 30000, // 30 segundos
     });
 
     const [acceptingId, setAcceptingId] = useState<string | null>(null);
@@ -185,13 +188,6 @@ export default function UserPendingInvitesScreen() {
                         </View>
 
                         <View style={styles.cardBody}>
-                            <View style={styles.rankingBadge}>
-                                <Users size={16} color={Colors.darkTint} weight="bold" />
-                                <NormalText style={styles.rankingBadgeText}>
-                                    Ranking
-                                </NormalText>
-                            </View>
-
                             <TextTitle style={styles.rankingName}>
                                 {item.rankingName}
                             </TextTitle>
@@ -199,6 +195,27 @@ export default function UserPendingInvitesScreen() {
                             <NormalText style={styles.inviteText}>
                                 {item.inviterName} convidou você para participar deste ranking
                             </NormalText>
+
+                            {item.ranking.criteria && item.ranking.criteria.length > 0 && (
+                                <View style={styles.criteriaSection}>
+                                    <View style={styles.criteriaList}>
+                                        {item.ranking.criteria.slice(0, 3).map((criterion, index) => (
+                                            <View key={index} style={styles.criterionBadge}>
+                                                <NormalText style={styles.criterionText}>
+                                                    {criterion}
+                                                </NormalText>
+                                            </View>
+                                        ))}
+                                        {item.ranking.criteria.length > 3 && (
+                                            <View style={styles.moreCriteriaBadge}>
+                                                <NormalText style={styles.moreCriteriaText}>
+                                                    +{item.ranking.criteria.length - 3}
+                                                </NormalText>
+                                            </View>
+                                        )}
+                                    </View>
+                                </View>
+                            )}
                         </View>
 
                         <View style={styles.actionSection}>
@@ -383,13 +400,46 @@ const styles = StyleSheet.create({
     },
     inviteText: {
         color: Colors.textHiglight,
-        fontSize: 15,
-        lineHeight: 22,
+        fontSize: 14,
+        lineHeight: 18,
+        marginTop: 8,
+    },
+    criteriaSection: {
+        marginTop: 12,
+    },
+    criteriaList: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 6,
+    },
+    criterionBadge: {
+        backgroundColor: Colors.background,
+        borderRadius: 12,
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderWidth: 1,
+        borderColor: Colors.background,
+    },
+    criterionText: {
+        color: Colors.darkTint,
+        fontSize: 10,
+        fontWeight: '500',
+    },
+    moreCriteriaBadge: {
+        backgroundColor: Colors.darkTint,
+        borderRadius: 12,
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+    },
+    moreCriteriaText: {
+        color: Colors.white,
+        fontSize: 10,
+        fontWeight: '600',
     },
     actionSection: {
         flexDirection: 'row',
         borderTopWidth: 1,
-        borderTopColor: Colors.tint,
+        borderTopColor: Colors.background,
         paddingTop: 20,
         paddingHorizontal: 20,
         paddingBottom: 20,
