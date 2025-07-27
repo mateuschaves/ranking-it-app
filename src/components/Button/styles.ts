@@ -22,6 +22,6 @@ const Text = styled.Text<ButtonProps>`
 
 const ActivityIndicator = styled.ActivityIndicator.attrs<ButtonProps>({
     size: "small",
-    })``;
+})``;
 
 export { Container, Text, ActivityIndicator };

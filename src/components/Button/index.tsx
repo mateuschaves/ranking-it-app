@@ -2,6 +2,7 @@ import React from 'react'
 
 import * as Styles from './styles'
 import Show from '../Standart/Show'
+import Colors from '~/theme/colors'
 
 export interface ButtonProps {
     onPress: () => void
@@ -12,7 +13,7 @@ export interface ButtonProps {
     iconRight?: React.ReactNode
 }
 
-export default function Button({ onPress, title, loading = false, iconLeft, variant = 'filled' , iconRight}: ButtonProps) {
+export default function Button({ onPress, title, loading = false, iconLeft, variant = 'filled', iconRight }: ButtonProps) {
     function performOnPress() {
         if (loading) return;
         onPress();
@@ -26,7 +27,7 @@ export default function Button({ onPress, title, loading = false, iconLeft, vari
                 {iconRight && iconRight}
             </Show>
             <Show when={loading}>
-                <Styles.ActivityIndicator />
+                <Styles.ActivityIndicator color={Colors.darkTint} />
             </Show>
         </Styles.Container>
     )

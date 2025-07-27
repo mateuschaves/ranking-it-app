@@ -4,9 +4,30 @@ export interface GetRankingsByUserResponse {
     id:          string;
     name:        string;
     description: string;
-    banner:      Banner;
-    createdAt:   Date;
+    banner:      Banner | null;
+    createdAt:   string;
+    rankingCriteria: Array<{
+        name: string;
+    }>;
+    criteria:    string[];
+    owner:       {
+        id:    string;
+        name:  string;
+        email: string;
+        avatar: {
+            url: string;
+        } | null;
+    };
+    createdBy:   {
+        id:    string;
+        name:  string;
+        email: string;
+        avatar: {
+            url: string;
+        } | null;
+    };
 }
+
 export interface Banner {
     id:        string;
     name:      string;
@@ -18,7 +39,6 @@ export interface Banner {
     updatedAt: Date;
     deletedAt: null;
 }
-
 
 export async function GetRankingsByUser(
 ): Promise<GetRankingsByUserResponse[]> {
