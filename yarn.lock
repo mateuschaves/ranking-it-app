@@ -5160,6 +5160,11 @@ react-native-animatable@1.4.0:
   dependencies:
     prop-types "^15.8.1"
 
+react-native-animated-nav-tab-bar@^3.1.13:
+  version "3.1.13"
+  resolved "https://registry.yarnpkg.com/react-native-animated-nav-tab-bar/-/react-native-animated-nav-tab-bar-3.1.13.tgz#c2f0e223b4d4fdefee3de41376671da565c22dfb"
+  integrity sha512-/AWf/6sdlGtOgi7KeMzUFipkI3SHGTwK1mthUe0PtI/OrCNangQ4s6KYsXkz4bm33yI3RBhcbUfcUWHeumRWkA==
+
 react-native-gesture-handler@~2.20.2:
   version "2.20.2"
   resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-2.20.2.tgz#73844c8e9c417459c2f2981bc4d8f66ba8a5ee66"
