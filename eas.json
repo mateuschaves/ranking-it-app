@@ -9,10 +9,12 @@
       "distribution": "internal"
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "yarn": "1.22.22"
     },
     "production": {
-      "autoIncrement": true
+      "autoIncrement": true,
+      "yarn": "1.22.22"
     }
   },
   "submit": {
