@@ -26,6 +26,7 @@ export type RootStackParamList = {
     CreateRankingItemScoreScreen: RankingItemDetailScreenProps;
     CreateRankingItemScreen: CreateRankingItemScreenProps;
     ProfilePhotoScreen: undefined;
+    UserPendingInvitesScreen: undefined;
 }
 
 export type PublicStackParamList = {

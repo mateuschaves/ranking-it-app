@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, Alert, ActivityIndicator, Image } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Alert, ActivityIndicator, Image, ScrollView, RefreshControl, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Container } from '~/components/BaseScreen';
 import { TextTitle } from '~/components/Typography/TextTitle';
@@ -7,7 +7,7 @@ import { NormalText } from '~/components/Typography/NormalText';
 import theme from '~/theme';
 import Colors from '~/theme/colors';
 import CachedImage from 'expo-cached-image';
-import { PencilSimple, CaretRight } from 'phosphor-react-native';
+import { PencilSimple, CaretRight, User, Gear, Bell, SignOut } from 'phosphor-react-native';
 import Divider from '~/components/Divider';
 import { asyncStorage, StorageKeys } from '~/shared/storage_service';
 import { useUserContext } from '~/context/UserContext';
@@ -21,7 +21,8 @@ const AVATAR_BASE_URL = 'https://ranking-attachments.s3.us-east-1.amazonaws.com/
 export default function ProfileScreen() {
     const insets = useSafeAreaInsets();
     const { setIsAuthenticated, setUser, user: userContext } = useUserContext();
-    const { data: user, isLoading } = useQuery<GetUserProfileResponse>({
+    const [refreshing, setRefreshing] = React.useState(false);
+    const { data: user, isLoading, refetch } = useQuery({
         queryKey: ['user-profile'],
         queryFn: getUserProfile,
     });
@@ -33,12 +34,13 @@ export default function ProfileScreen() {
         console.log(userContext);
     }, [user?.id]);
 
-
     function handleEditProfile() {
         navigationService.navigate('ProfilePhotoScreen');
     }
     function handleSettings() { }
-    function handlePendingInvites() { }
+    function handlePendingInvites() {
+        navigationService.navigate('UserPendingInvitesScreen');
+    }
     function handleLogout() {
         Alert.alert(
             'Sair',
@@ -55,10 +57,24 @@ export default function ProfileScreen() {
         );
     }
 
+    async function handleRefresh() {
+        setRefreshing(true);
+        const { data } = await refetch();
+        if (data?.id) setUser(data);
+        setRefreshing(false);
+    }
+
     if (isLoading) {
         return (
             <Container style={[styles.container, { flex: 1, justifyContent: 'center', alignItems: 'center' }]}>
-                <ActivityIndicator size="large" color={Colors.darkTint} />
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator
+                        size="large"
+                        color={Colors.darkTint}
+                        style={{ marginBottom: 16 }}
+                    />
+                    <NormalText style={styles.loadingText}>Carregando perfil...</NormalText>
+                </View>
             </Container>
         );
     }
@@ -81,152 +97,259 @@ export default function ProfileScreen() {
     }
 
     return (
-        <Container style={[styles.container, { flex: 1 }]}>
-            <View style={styles.header}>
-                <View style={styles.avatarWrapper}>
-                    {userContext?.avatarId ? (
-                        <Image
-                            source={{ uri: avatarUrl }}
-                            style={styles.avatar}
-                            resizeMode="cover"
-                        />
-                    ) : (
-                        <CachedImage
-                            source={{ uri: 'https://ui-avatars.com/api/?name=' + encodeURIComponent(userContext?.name || '') + '&background=0D8ABC&color=fff' }}
-                            style={styles.avatar}
-                            resizeMode="cover"
-                            cacheKey={`profile-avatar-${userContext?.name}`}
-                        />
-                    )}
-                    <TouchableOpacity style={styles.editIcon} onPress={handleEditProfile} activeOpacity={0.7}>
-                        <PencilSimple size={18} color={Colors.white} weight="bold" />
+        <Container>
+            <ScrollView
+                contentContainerStyle={{ flexGrow: 1 }}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={handleRefresh}
+                        colors={[Colors.darkTint]}
+                    />
+                }
+                showsVerticalScrollIndicator={false}
+            >
+                <View style={styles.header}>
+                    <View style={styles.profileHeader}>
+                        <View style={styles.avatarContainer}>
+                            {userContext?.avatarId ? (
+                                <Image
+                                    source={{ uri: avatarUrl }}
+                                    style={styles.avatar}
+                                    resizeMode="cover"
+                                />
+                            ) : (
+                                <View style={styles.avatarPlaceholder}>
+                                    <User size={36} color={Colors.white} weight="bold" />
+                                </View>
+                            )}
+                        </View>
+
+                        <View style={styles.userInfo}>
+                            <TextTitle style={styles.userName}>
+                                {userContext?.name}
+                            </TextTitle>
+                            <NormalText style={styles.userEmail} numberOfLines={1} ellipsizeMode="tail">
+                                {userContext?.email}
+                            </NormalText>
+                        </View>
+
+                        <TouchableOpacity style={styles.editProfileButton} onPress={handleEditProfile} activeOpacity={0.7}>
+                            <PencilSimple size={16} color={Colors.darkTint} weight="bold" />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
+                <View style={styles.content}>
+                    <View style={styles.card}>
+                        <TouchableOpacity style={styles.option} onPress={handleSettings} activeOpacity={0.8}>
+                            <View style={styles.optionLeft}>
+                                <View style={styles.optionIcon}>
+                                    <Gear size={20} color={Colors.darkTint} weight="bold" />
+                                </View>
+                                <View style={styles.optionTextContainer}>
+                                    <NormalText style={styles.optionTitle}>Configurações da conta</NormalText>
+                                    <NormalText style={styles.optionSubtitle}>Gerencie suas preferências</NormalText>
+                                </View>
+                            </View>
+                            <CaretRight size={20} color={Colors.textHiglight} />
+                        </TouchableOpacity>
+
+                        <Divider />
+
+                        <TouchableOpacity style={styles.option} onPress={handlePendingInvites} activeOpacity={0.8}>
+                            <View style={styles.optionLeft}>
+                                <View style={styles.optionIcon}>
+                                    <Bell size={20} color={Colors.darkTint} weight="bold" />
+                                </View>
+                                <View style={styles.optionTextContainer}>
+                                    <NormalText style={styles.optionTitle}>Convites pendentes</NormalText>
+                                    <NormalText style={styles.optionSubtitle}>Veja seus convites aguardando</NormalText>
+                                </View>
+                            </View>
+                            <View style={styles.optionRight}>
+                                {userContext?.pendingInvitesCount && userContext?.pendingInvitesCount > 0 && (
+                                    <View style={styles.badge}>
+                                        <NormalText style={styles.badgeText}>{userContext.pendingInvitesCount}</NormalText>
+                                    </View>
+                                )}
+                                <CaretRight size={20} color={Colors.textHiglight} />
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
+                <View style={{ flex: 1 }} />
+
+                <View style={[styles.logoutSection, { paddingBottom: insets.bottom + 100 }]}>
+                    <TouchableOpacity style={styles.logoutButton} onPress={handleLogout} activeOpacity={0.8}>
+                        <SignOut size={18} color={Colors.textHiglight} weight="regular" />
+                        <NormalText style={styles.logoutText}>Sair da conta</NormalText>
                     </TouchableOpacity>
                 </View>
-                <TextTitle fontWeight={theme.weights.lg} style={styles.name}>
-                    {userContext?.name}
-                </TextTitle>
-                <NormalText style={styles.email}>{userContext?.email}</NormalText>
-            </View>
-
-            <View style={styles.sectionList}>
-                <TouchableOpacity style={styles.option} onPress={handleSettings} activeOpacity={0.7}>
-                    <NormalText style={styles.optionText}>Configurações da conta</NormalText>
-                    <CaretRight size={20} color={Colors.darkTint} />
-                </TouchableOpacity>
-                <Divider />
-                <TouchableOpacity style={styles.option} onPress={handlePendingInvites} activeOpacity={0.7}>
-                    <NormalText style={styles.optionText}>Convites pendentes</NormalText>
-                    <View style={{ flexDirection: 'row-reverse', alignItems: 'center' }}>
-                        <CaretRight size={20} color={Colors.darkTint} />
-                        {userContext?.pendingInvitesCount && userContext?.pendingInvitesCount > 0 && (
-                            <View style={styles.badge}>
-                                <NormalText style={styles.badgeText}>{userContext.pendingInvitesCount}</NormalText>
-                            </View>
-                        )}
-                    </View>
-                </TouchableOpacity>
-            </View>
-
-            <View style={{ flex: 1 }} />
-
-            <View style={[styles.logoutWrapper, { paddingBottom: insets.bottom + 16 }]}>
-                <TouchableOpacity style={styles.logout} onPress={handleLogout} activeOpacity={0.7}>
-                    <NormalText style={styles.logoutText}>Sair</NormalText>
-                </TouchableOpacity>
-            </View>
+            </ScrollView>
         </Container>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        padding: 24,
         flex: 1,
         backgroundColor: Colors.background,
     },
     header: {
+        paddingHorizontal: 24,
+        paddingTop: 20,
+        paddingBottom: 32,
+    },
+    profileHeader: {
+        flexDirection: 'row',
         alignItems: 'center',
-        marginTop: 40,
-        marginBottom: 32,
-    },
-    avatarWrapper: {
-        position: 'relative',
-        marginBottom: 16,
-    },
-    avatar: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
-        backgroundColor: Colors.darkTint,
-    },
-    editIcon: {
-        position: 'absolute',
-        right: 0,
-        bottom: 0,
-        backgroundColor: Colors.darkTint,
-        borderRadius: 16,
-        padding: 4,
-        borderWidth: 2,
-        borderColor: Colors.background,
+        backgroundColor: Colors.white,
+        borderRadius: 20,
+        padding: 24,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.06,
+        shadowRadius: 8,
         elevation: 2,
     },
-    name: {
+    avatarContainer: {
+        marginRight: 16,
+    },
+    avatar: {
+        width: 72,
+        height: 72,
+        borderRadius: 36,
+        backgroundColor: Colors.darkTint,
+    },
+    avatarPlaceholder: {
+        width: 72,
+        height: 72,
+        borderRadius: 36,
+        backgroundColor: Colors.darkTint,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    userInfo: {
+        flex: 1,
+    },
+    userName: {
+        fontSize: 20,
+        fontWeight: '600',
+        color: Colors.darkTint,
         marginBottom: 4,
-        textAlign: 'center',
     },
-    email: {
+    userEmail: {
         color: Colors.textHiglight,
-        marginBottom: 16,
-        textAlign: 'center',
+        fontSize: 11,
+        lineHeight: 14,
     },
-    sectionList: {
-        marginBottom: 24,
+    editProfileButton: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
         backgroundColor: Colors.background,
-        borderRadius: 12,
-        paddingVertical: 4,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: Colors.background,
+    },
+    content: {
+        paddingHorizontal: 24,
+        paddingBottom: 24,
+    },
+    card: {
+        backgroundColor: Colors.white,
+        borderRadius: 16,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.06,
+        shadowRadius: 10,
+        elevation: 3,
+        overflow: 'hidden',
     },
     option: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingVertical: 18,
-        paddingHorizontal: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: Colors.background,
+        paddingVertical: 20,
+        paddingHorizontal: 20,
     },
-    optionText: {
+    optionLeft: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        flex: 1,
+    },
+    optionIcon: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: Colors.background,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 16,
+    },
+    optionTextContainer: {
+        flex: 1,
+    },
+    optionTitle: {
         fontSize: 16,
+        fontWeight: '600',
         color: Colors.darkTint,
+        marginBottom: 2,
     },
-    logout: {
-        marginTop: 'auto',
-        marginBottom: 8,
+    optionSubtitle: {
+        fontSize: 14,
+        color: Colors.textHiglight,
+        lineHeight: 18,
+    },
+    optionRight: {
+        flexDirection: 'row',
         alignItems: 'center',
-        paddingVertical: 16,
-    },
-    logoutText: {
-        color: Colors.error,
-        fontSize: 16,
-    },
-    logoutWrapper: {
-        width: '100%',
-        alignItems: 'center',
-        justifyContent: 'flex-end',
-        paddingBottom: 24,
     },
     badge: {
         backgroundColor: Colors.darkTint,
-        borderRadius: 10,
-        minWidth: 20,
-        height: 20,
+        borderRadius: 12,
+        minWidth: 24,
+        height: 24,
         justifyContent: 'center',
         alignItems: 'center',
-        marginLeft: 8,
-        paddingHorizontal: 6,
+        marginRight: 12,
+        paddingHorizontal: 8,
     },
     badgeText: {
         color: Colors.white,
         fontSize: 12,
         fontWeight: 'bold',
     },
+    logoutSection: {
+        paddingHorizontal: 24,
+        marginTop: Platform.OS === 'ios' ? 20 : 40, // Reduzido ainda mais
+    },
+    logoutButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+    },
+    logoutText: {
+        color: Colors.textHiglight,
+        fontSize: 15,
+        fontWeight: '500',
+        marginLeft: 8,
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingVertical: 20,
+    },
+    loadingText: {
+        color: Colors.darkTint,
+        fontSize: 16,
+        fontWeight: '500',
+    },
 });
+
