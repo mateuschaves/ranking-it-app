@@ -4,9 +4,6 @@ import { PlusCircle, Users, User, Star } from 'phosphor-react-native'
 import { Container, Content } from "~/components/BaseScreen";
 import { TextTitle } from "~/components/Typography/TextTitle";
 import { NormalText } from '~/components/Typography/NormalText';
-import RankingItem from "~/components/RankingItem";
-import theme from "~/theme";
-import { Row } from "~/components/Row";
 import { useQuery } from '@tanstack/react-query';
 import { QuerieKeys } from '~/api/resources/querie-keys';
 import { GetRankingsByUser, GetRankingsByUserResponse } from '~/api/resources/core/get-ranking-by-user';
@@ -98,11 +95,11 @@ export default function HomeScreen() {
                                 activeOpacity={0.9}
                             >
                                 <View style={styles.cardHeader}>
-                                    {item.banner?.name ? (
+                                    {item.banner ? (
                                         <CachedImage
-                                            source={{ uri: `${constants.bucketUrl}/${item.banner.name}` }}
+                                            source={{ uri: item.banner, expiresIn: 10 }}
                                             style={styles.banner}
-                                            cacheKey={`ranking-banner-${item.banner.name}`}
+                                            cacheKey={`ranking-banner-${item.banner}`}
                                             resizeMode="cover"
                                         />
                                     ) : (
@@ -200,7 +197,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'flex-start',
         paddingHorizontal: 4,
-        paddingTop: Platform.OS === 'android' ? 40 : 20, // Padding extra apenas para Android
+        paddingTop: Platform.OS === 'android' ? 40 : 8, // Padding extra apenas para Android
         paddingBottom: 32,
     },
     greetingSection: {
@@ -231,7 +228,7 @@ const styles = StyleSheet.create({
         elevation: 4,
     },
     listContainer: {
-        paddingHorizontal: 4, // Reduzido de 8 para 4
+        paddingHorizontal: 4,
         paddingBottom: 32,
     },
     card: {
@@ -244,7 +241,7 @@ const styles = StyleSheet.create({
         shadowRadius: 10,
         elevation: 3,
         overflow: 'hidden',
-        marginHorizontal: 0, // Remove margens horizontais
+        marginHorizontal: 0,
     },
     cardHeader: {
         height: 140,
