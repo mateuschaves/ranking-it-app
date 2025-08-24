@@ -3,9 +3,9 @@ import TextInput from '~/components/TextField';
 
 import { isValidEmail } from '~/utils/validation';
 import { hapticFeedback, HapticsType } from '~/utils/feedback';
-import {Container, Content} from "~/components/BaseScreen";
+import { Container, Content } from "~/components/BaseScreen";
 import Button from "~/components/Button";
-import {TextTitle} from "~/components/Typography/TextTitle";
+import { TextTitle } from "~/components/Typography/TextTitle";
 import Colors from "~/theme/colors";
 import { useUserContext } from '~/context/UserContext';
 import { useMutation } from '@tanstack/react-query';
@@ -19,7 +19,7 @@ const SignInScreen: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [hasError, setHasError] = useState(false);
-  const {setIsAuthenticated} = useUserContext();
+  const { setIsAuthenticated } = useUserContext();
   const {
     mutateAsync: SignInWithEmailAndPasswordFn,
     isPending: isSignInLoading,
@@ -32,19 +32,22 @@ const SignInScreen: React.FC = () => {
       Keyboard.dismiss();
       hapticFeedback(HapticsType.ERROR);
       toast.error('E-mail ou senha inválidos');
-    },
-    onMutate: () => {
-      setEmail('');
       setPassword('');
-      setHasError(false);
     }
   });
+
+  function clearForm() {
+    setEmail('');
+    setPassword('');
+    setHasError(false);
+  }
 
   async function handleSuccessAuth(response: SignInWithEmailAndPasswordResponse) {
     await asyncStorage.setItem(StorageKeys.ACCESS_TOKEN, response.accessToken);
     Keyboard.dismiss();
     hapticFeedback(HapticsType.SUCCESS);
     setIsAuthenticated(true);
+    clearForm();
   }
 
   async function handleContinue() {
@@ -85,7 +88,7 @@ const SignInScreen: React.FC = () => {
           hasError={false}
           placeholderTextColor={Colors.darkTint}
         />
-        <Button onPress={handleContinue} title={'Entrar'} loading={isSignInLoading}/>
+        <Button onPress={handleContinue} title={'Entrar'} loading={isSignInLoading} />
       </Content>
     </Container>
   );

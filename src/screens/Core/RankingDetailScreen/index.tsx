@@ -96,9 +96,7 @@ export default function RankingDetailScreen() {
     await inviteUserToRankingFn({ email, rankingId: item.id });
   }
 
-  const headerImageUri = item.banner?.name
-    ? `${constants.bucketUrl}/${item.banner.name}`
-    : constants.bannerPlaceholder;
+  const headerImageUri = item.banner
 
   return (
     <View style={styles.container}>
@@ -223,7 +221,7 @@ export default function RankingDetailScreen() {
         ]}>
           <CachedImage
             style={styles.headerImage}
-            cacheKey={`ranking-detail-banner-${item.banner?.name || 'placeholder'}`}
+            cacheKey={`ranking-detail-banner-${item.banner || 'placeholder'}`}
             placeholderContent={(
               <ActivityIndicator
                 color={Colors.white}

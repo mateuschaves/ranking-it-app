@@ -4,7 +4,7 @@ export interface GetRankingsByUserResponse {
     id:          string;
     name:        string;
     description: string;
-    banner:      Banner | null;
+    banner:      string | null;
     createdAt:   string;
     rankingCriteria: Array<{
         name: string;
