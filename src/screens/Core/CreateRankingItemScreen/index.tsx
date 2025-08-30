@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Container, Content } from '~/components/BaseScreen'
+import { SafeAreaView } from 'react-native'
 import Button from '~/components/Button'
 import TextField from '~/components/TextField'
 import { View, StyleSheet, TouchableOpacity, Platform, ScrollView, Image } from 'react-native'
@@ -149,7 +149,7 @@ export default function CreateRankingItemScreen({ route }: CreateRankingItemScre
     }
 
     return (
-        <Container>
+        <SafeAreaView style={styles.container}>
             <ScrollView
                 style={styles.scrollView}
                 contentContainerStyle={styles.scrollContent}
@@ -210,7 +210,6 @@ export default function CreateRankingItemScreen({ route }: CreateRankingItemScre
                     </View>
                 </View>
             </ScrollView>
-
             <View style={styles.fixedButton}>
                 <Button
                     title={isCreatingItemLoading ? 'Criando...' : 'Criar Item'}
@@ -219,21 +218,28 @@ export default function CreateRankingItemScreen({ route }: CreateRankingItemScre
                     variant='filled'
                 />
             </View>
-        </Container>
+        </SafeAreaView>
     )
 }
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: Colors.background,
+    },
     scrollView: {
         flex: 1,
+        backgroundColor: Colors.background,
+        paddingBottom: 100,
     },
     scrollContent: {
         paddingHorizontal: 20,
         paddingTop: 20,
-        paddingBottom: 120,
+        marginBottom: 100,
     },
     content: {
         flex: 1,
+
     },
     inputSection: {
         marginBottom: 32,
@@ -308,15 +314,8 @@ const styles = StyleSheet.create({
         fontWeight: '500',
     },
     fixedButton: {
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        backgroundColor: Colors.white,
         paddingHorizontal: 20,
-        paddingVertical: 16,
-        paddingBottom: Platform.OS === 'android' ? 32 : 16,
-        borderTopWidth: 1,
-        borderTopColor: Colors.background,
+        paddingTop: 16,
+        paddingBottom: 100,
     },
 }) 
