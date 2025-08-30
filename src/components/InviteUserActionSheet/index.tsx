@@ -1,6 +1,5 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { View, StyleSheet, TextInput, Alert } from 'react-native';
-import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
+import React, { useCallback, useState } from 'react';
+import { View, StyleSheet, TextInput, Alert, KeyboardAvoidingView, Platform, Modal, TouchableWithoutFeedback } from 'react-native';
 import { TouchableOpacity } from 'react-native';
 import { X, UserPlus } from 'phosphor-react-native';
 import Colors from '~/theme/colors';
@@ -23,17 +22,6 @@ export default function InviteUserActionSheet({
 }: InviteUserActionSheetProps) {
     const [email, setEmail] = useState('');
     const [error, setError] = useState('');
-
-    const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-    const snapPoints = useMemo(() => ['50%'], []);
-
-    React.useEffect(() => {
-        if (visible) {
-            bottomSheetModalRef.current?.present();
-        } else {
-            bottomSheetModalRef.current?.dismiss();
-        }
-    }, [visible]);
 
     const handleClose = useCallback(() => {
         setEmail('');
@@ -61,33 +49,36 @@ export default function InviteUserActionSheet({
     };
 
     const styles = StyleSheet.create({
-        backdrop: {
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
+        modalOverlay: {
+            flex: 1,
             backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            justifyContent: 'flex-end',
         },
-        bottomSheetBackground: {
+        modalContent: {
             backgroundColor: Colors.white,
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
+            width: '100%',
+            paddingTop: 20,
+            paddingHorizontal: 24,
+            paddingBottom: 34,
         },
         handleIndicator: {
             backgroundColor: Colors.textHiglight,
             width: 40,
             height: 4,
+            borderRadius: 2,
+            alignSelf: 'center',
+            marginBottom: 16,
         },
         content: {
             flex: 1,
-            padding: 24,
         },
         header: {
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
-            marginBottom: 24,
+            marginBottom: 32,
         },
         title: {
             fontSize: 20,
@@ -101,7 +92,7 @@ export default function InviteUserActionSheet({
             flex: 1,
         },
         inputContainer: {
-            marginBottom: 24,
+            marginBottom: 32,
         },
         label: {
             fontSize: 16,
@@ -124,65 +115,75 @@ export default function InviteUserActionSheet({
             fontSize: 14,
             marginTop: 4,
         },
+        keyboardAvoidingView: {
+            flex: 1,
+        },
     });
 
     return (
-        <BottomSheetModal
-            ref={bottomSheetModalRef}
-            index={0}
-            snapPoints={snapPoints}
-            onDismiss={handleClose}
-            backgroundStyle={styles.bottomSheetBackground}
-            handleIndicatorStyle={styles.handleIndicator}
-            backdropComponent={() => (
-                <View style={styles.backdrop} />
-            )}
+        <Modal
+            visible={visible}
+            transparent={true}
+            animationType="slide"
+            onRequestClose={handleClose}
         >
-            <BottomSheetView style={styles.content}>
-                <View style={styles.header}>
-                    <TextTitle style={styles.title}>
-                        Convidar usuário
-                    </TextTitle>
-                    <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
-                        <X size={24} color={Colors.darkTint} weight="bold" />
-                    </TouchableOpacity>
-                </View>
+            <TouchableWithoutFeedback onPress={handleClose}>
+                <View style={styles.modalOverlay}>
+                    <TouchableWithoutFeedback onPress={() => { }}>
+                        <View style={styles.modalContent}>
+                            <View style={styles.handleIndicator} />
+                            <KeyboardAvoidingView
+                                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                                style={styles.keyboardAvoidingView}
+                            >
+                                <View style={styles.header}>
+                                    <TextTitle style={styles.title}>
+                                        Convidar usuário
+                                    </TextTitle>
+                                    <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
+                                        <X size={24} color={Colors.darkTint} weight="bold" />
+                                    </TouchableOpacity>
+                                </View>
 
-                <View style={styles.form}>
-                    <View style={styles.inputContainer}>
-                        <NormalText style={styles.label}>
-                            Email do usuário
-                        </NormalText>
-                        <TextInput
-                            style={styles.input}
-                            placeholder=""
-                            value={email}
-                            onChangeText={(text) => {
-                                setEmail(text);
-                                setError('');
-                            }}
-                            keyboardType="email-address"
-                            autoCapitalize="none"
-                            autoCorrect={false}
-                            placeholderTextColor={Colors.textHiglight}
-                            autoFocus
-                        />
-                        {error ? (
-                            <NormalText style={styles.errorText}>
-                                {error}
-                            </NormalText>
-                        ) : null}
-                    </View>
+                                <View style={styles.form}>
+                                    <View style={styles.inputContainer}>
+                                        <NormalText style={styles.label}>
+                                            Email do usuário
+                                        </NormalText>
+                                        <TextInput
+                                            style={styles.input}
+                                            placeholder=""
+                                            value={email}
+                                            onChangeText={(text) => {
+                                                setEmail(text);
+                                                setError('');
+                                            }}
+                                            keyboardType="email-address"
+                                            autoCapitalize="none"
+                                            autoCorrect={false}
+                                            placeholderTextColor={Colors.textHiglight}
+                                            autoFocus
+                                        />
+                                        {error ? (
+                                            <NormalText style={styles.errorText}>
+                                                {error}
+                                            </NormalText>
+                                        ) : null}
+                                    </View>
 
-                    <Button
-                        title="Enviar convite"
-                        onPress={handleInvite}
-                        loading={loading}
-                        variant='filled'
-                        iconLeft={<UserPlus size={20} color={Colors.darkTint} weight="bold" />}
-                    />
+                                    <Button
+                                        title="Enviar convite"
+                                        onPress={handleInvite}
+                                        loading={loading}
+                                        variant='filled'
+                                        iconLeft={<UserPlus size={20} color={Colors.darkTint} weight="bold" />}
+                                    />
+                                </View>
+                            </KeyboardAvoidingView>
+                        </View>
+                    </TouchableWithoutFeedback>
                 </View>
-            </BottomSheetView>
-        </BottomSheetModal>
+            </TouchableWithoutFeedback>
+        </Modal>
     );
 } 

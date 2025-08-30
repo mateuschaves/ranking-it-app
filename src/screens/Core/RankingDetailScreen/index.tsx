@@ -19,7 +19,7 @@ import Whitespace from '~/components/Whitespace';
 import CachedImage from 'expo-cached-image';
 import { ActivityIndicator } from 'react-native';
 import Colors from '~/theme/colors';
-import InviteUserActionSheet from '~/components/InviteUserActionSheet/index';
+import InviteUserModal from '~/components/InviteUserModal/index';
 import { InviteUserToRanking } from '~/api/resources/core/invite-user-to-ranking';
 import { showToast, hapticFeedback, HapticsType } from '~/utils/feedback';
 import { useMutation } from '@tanstack/react-query';
@@ -96,7 +96,7 @@ export default function RankingDetailScreen() {
     await inviteUserToRankingFn({ email, rankingId: item.id });
   }
 
-  const headerImageUri = item.banner
+  const headerImageUri = item.banner || 'https://via.placeholder.com/400x280/EDEAE4/999999?text=Sem+Imagem'
 
   return (
     <View style={styles.container}>
@@ -239,7 +239,7 @@ export default function RankingDetailScreen() {
         </Animated.View>
       </Animated.View>
 
-      <InviteUserActionSheet
+      <InviteUserModal
         visible={inviteModalVisible}
         onClose={() => setInviteModalVisible(false)}
         onInvite={handleInviteUser}
