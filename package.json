@@ -24,6 +24,7 @@
     "expo-cached-image": "^52.0.40",
     "expo-haptics": "^14.0.1",
     "expo-image-picker": "~16.0.6",
+    "expo-insights": "~0.8.2",
     "expo-linear-gradient": "~14.0.2",
     "expo-status-bar": "~2.0.1",
     "lottie-react-native": "7.1.0",
