@@ -14,6 +14,7 @@ import { useUserContext } from '~/context/UserContext';
 import Colors from '~/theme/colors';
 import CachedImage from 'expo-cached-image';
 import constants from '~/config/consts';
+import Loading from '~/components/Loading';
 
 interface Props {
     // Define your props here
@@ -74,107 +75,111 @@ export default function HomeScreen() {
                         </TouchableOpacity>
                     </View>
 
-                    <FlatList
-                        data={rankings}
-                        keyExtractor={item => item.id}
-                        contentContainerStyle={styles.listContainer}
-                        showsVerticalScrollIndicator={false}
-                        refreshControl={
-                            <RefreshControl
-                                refreshing={refreshing}
-                                onRefresh={onRefresh}
-                                colors={[Colors.darkTint]}
-                                tintColor={Colors.darkTint}
-                                progressBackgroundColor={Colors.background}
-                            />
-                        }
-                        renderItem={({ item }) => (
-                            <TouchableOpacity
-                                style={styles.card}
-                                onPress={() => handleDetailRanking(item)}
-                                activeOpacity={0.9}
-                            >
-                                <View style={styles.cardHeader}>
-                                    {item.banner ? (
-                                        <CachedImage
-                                            source={{ uri: item.banner, expiresIn: 10 }}
-                                            style={styles.banner}
-                                            cacheKey={`ranking-banner-${item.banner}`}
-                                            resizeMode="cover"
-                                        />
-                                    ) : (
-                                        <View style={styles.bannerPlaceholder}>
-                                            <Users size={32} color={Colors.white} weight="bold" />
-                                        </View>
-                                    )}
-                                </View>
-
-                                <View style={styles.cardBody}>
-                                    <View style={styles.creatorInfo}>
-                                        {item.createdBy?.avatar?.url ? (
+                    {isLoading ? (
+                        <Loading size={50} color={Colors.darkTint} />
+                    ) : (
+                        <FlatList
+                            data={rankings}
+                            keyExtractor={item => item.id}
+                            contentContainerStyle={styles.listContainer}
+                            showsVerticalScrollIndicator={false}
+                            refreshControl={
+                                <RefreshControl
+                                    refreshing={refreshing}
+                                    onRefresh={onRefresh}
+                                    colors={[Colors.darkTint]}
+                                    tintColor={Colors.darkTint}
+                                    progressBackgroundColor={Colors.background}
+                                />
+                            }
+                            renderItem={({ item }) => (
+                                <TouchableOpacity
+                                    style={styles.card}
+                                    onPress={() => handleDetailRanking(item)}
+                                    activeOpacity={0.9}
+                                >
+                                    <View style={styles.cardHeader}>
+                                        {item.banner ? (
                                             <CachedImage
-                                                source={{ uri: item.createdBy.avatar.url }}
-                                                style={styles.creatorAvatar}
-                                                cacheKey={`creator-avatar-${item.createdBy.id}`}
+                                                source={{ uri: item.banner, expiresIn: 10 }}
+                                                style={styles.banner}
+                                                cacheKey={`ranking-banner-${item.banner}`}
                                                 resizeMode="cover"
                                             />
                                         ) : (
-                                            <View style={styles.creatorAvatarPlaceholder}>
-                                                <User size={8} color={Colors.white} weight="bold" />
+                                            <View style={styles.bannerPlaceholder}>
+                                                <Users size={32} color={Colors.white} weight="bold" />
                                             </View>
                                         )}
-                                        <NormalText style={styles.creatorName}>
-                                            {item.createdBy?.name}
-                                        </NormalText>
                                     </View>
 
-                                    <TextTitle style={styles.rankingName}>
-                                        {item.name}
-                                    </TextTitle>
-
-                                    {item.description && (
-                                        <NormalText style={styles.description}>
-                                            {item.description}
-                                        </NormalText>
-                                    )}
-
-                                    {item.criteria && item.criteria.length > 0 && (
-                                        <View style={styles.criteriaSection}>
-                                            <View style={styles.criteriaList}>
-                                                {item.criteria.slice(0, 3).map((criterion, index) => (
-                                                    <View key={index} style={styles.criterionBadge}>
-                                                        <NormalText style={styles.criterionText}>
-                                                            {criterion}
-                                                        </NormalText>
-                                                    </View>
-                                                ))}
-                                                {item.criteria.length > 3 && (
-                                                    <View style={styles.moreCriteriaBadge}>
-                                                        <NormalText style={styles.moreCriteriaText}>
-                                                            +{item.criteria.length - 3}
-                                                        </NormalText>
-                                                    </View>
-                                                )}
-                                            </View>
+                                    <View style={styles.cardBody}>
+                                        <View style={styles.creatorInfo}>
+                                            {item.createdBy?.avatar?.url ? (
+                                                <CachedImage
+                                                    source={{ uri: item.createdBy.avatar.url }}
+                                                    style={styles.creatorAvatar}
+                                                    cacheKey={`creator-avatar-${item.createdBy.id}`}
+                                                    resizeMode="cover"
+                                                />
+                                            ) : (
+                                                <View style={styles.creatorAvatarPlaceholder}>
+                                                    <User size={8} color={Colors.white} weight="bold" />
+                                                </View>
+                                            )}
+                                            <NormalText style={styles.creatorName}>
+                                                {item.createdBy?.name}
+                                            </NormalText>
                                         </View>
-                                    )}
+
+                                        <TextTitle style={styles.rankingName}>
+                                            {item.name}
+                                        </TextTitle>
+
+                                        {item.description && (
+                                            <NormalText style={styles.description}>
+                                                {item.description}
+                                            </NormalText>
+                                        )}
+
+                                        {item.criteria && item.criteria.length > 0 && (
+                                            <View style={styles.criteriaSection}>
+                                                <View style={styles.criteriaList}>
+                                                    {item.criteria.slice(0, 3).map((criterion, index) => (
+                                                        <View key={index} style={styles.criterionBadge}>
+                                                            <NormalText style={styles.criterionText}>
+                                                                {criterion}
+                                                            </NormalText>
+                                                        </View>
+                                                    ))}
+                                                    {item.criteria.length > 3 && (
+                                                        <View style={styles.moreCriteriaBadge}>
+                                                            <NormalText style={styles.moreCriteriaText}>
+                                                                +{item.criteria.length - 3}
+                                                            </NormalText>
+                                                        </View>
+                                                    )}
+                                                </View>
+                                            </View>
+                                        )}
+                                    </View>
+                                </TouchableOpacity>
+                            )}
+                            ListEmptyComponent={
+                                <View style={styles.emptyContainer}>
+                                    <View style={styles.emptyIconContainer}>
+                                        <Users size={48} color={Colors.textHiglight} weight="light" />
+                                    </View>
+                                    <TextTitle style={styles.emptyTitle}>
+                                        Nenhum ranking encontrado
+                                    </TextTitle>
+                                    <NormalText style={styles.emptySubtitle}>
+                                        Crie seu primeiro ranking usando o botão + acima!
+                                    </NormalText>
                                 </View>
-                            </TouchableOpacity>
-                        )}
-                        ListEmptyComponent={
-                            <View style={styles.emptyContainer}>
-                                <View style={styles.emptyIconContainer}>
-                                    <Users size={48} color={Colors.textHiglight} weight="light" />
-                                </View>
-                                <TextTitle style={styles.emptyTitle}>
-                                    Nenhum ranking encontrado
-                                </TextTitle>
-                                <NormalText style={styles.emptySubtitle}>
-                                    Crie seu primeiro ranking usando o botão + acima!
-                                </NormalText>
-                            </View>
-                        }
-                    />
+                            }
+                        />
+                    )}
 
                     <BottomSheet ref={bottomSheetRef} containerHeight={300} >
                         <TouchableOpacity onPress={() => { }}>

@@ -1,47 +1,35 @@
-import React, {useCallback, useEffect, useLayoutEffect, useState} from 'react';
+import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import PublicStack from './PublicStack.navigation';
 import { PublicStackParamList } from './navigation.type';
 import PrivateStack from './PrivateStack.navigation';
-import {asyncStorage, StorageKeys} from "~/shared/storage_service";
-import {useUserContext} from "~/context/UserContext";
+import { useUserContext } from "~/context/UserContext";
 
 const Stack = createNativeStackNavigator<PublicStackParamList>();
 
 function RootStack() {
-  const { isAuthenticated, setIsAuthenticated } = useUserContext()
-  useLayoutEffect(useCallback(() => {
-      asyncStorage.getItem(StorageKeys.ACCESS_TOKEN).then((accessToken) => {
-        if (accessToken) {
-          try {
-            const decodedToken = JSON.parse(atob(accessToken.split('.')[1]));
-            if (decodedToken.exp * 1000 > Date.now()) {
-              setIsAuthenticated(true);
-            } else {
-              setIsAuthenticated(false);
-            }
-          } catch (error) {
-            console.error("Invalid token format", error);
-            setIsAuthenticated(false);
-          }
-        } else {
-          setIsAuthenticated(false);
-        }
-      })
-  }, []), []);
+  const { isAuthenticated, isLoading } = useUserContext();
+
+  // The native splash screen will be shown while isLoading is true
+  // and will be hidden automatically when checkAuthStatus completes
+
+  // Don't render anything while checking auth status
+  if (isLoading) {
+    return null;
+  }
 
   return (
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false
-        }}
-      >
-        {isAuthenticated ? (
-          <Stack.Screen name="PrivateStack" component={PrivateStack} />
-        ) : (
-          <Stack.Screen name="PublicStack" component={PublicStack} />
-        )}
-      </Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false
+      }}
+    >
+      {isAuthenticated ? (
+        <Stack.Screen name="PrivateStack" component={PrivateStack} />
+      ) : (
+        <Stack.Screen name="PublicStack" component={PublicStack} />
+      )}
+    </Stack.Navigator>
   );
 }
 

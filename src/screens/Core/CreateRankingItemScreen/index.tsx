@@ -5,7 +5,7 @@ import TextField from '~/components/TextField'
 import { View, StyleSheet, TouchableOpacity, Platform, ScrollView, Image } from 'react-native'
 import { TextTitle } from '~/components/Typography/TextTitle'
 import { NormalText } from '~/components/Typography/NormalText'
-import { Camera, X, Image as ImageIcon, ArrowLeft, Plus } from 'phosphor-react-native'
+import { X, Image as ImageIcon, ArrowLeft, Plus } from 'phosphor-react-native'
 import { useNavigation } from '@react-navigation/native'
 
 import Colors from '~/theme/colors'
@@ -34,6 +34,7 @@ interface ItemImage {
     uri: string
     uploaded?: UploadFileResponse
     loading?: boolean
+    error?: boolean
 }
 
 export default function CreateRankingItemScreen({ route }: CreateRankingItemScreenProps) {
@@ -81,13 +82,39 @@ export default function CreateRankingItemScreen({ route }: CreateRankingItemScre
     })
 
     async function openImagePicker() {
-        let result = await ExpoImagePicker.launchImageLibraryAsync({
-            mediaTypes: ExpoImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1,
-        });
+        try {
+            // Request permissions first
+            const permissionResult = await ExpoImagePicker.requestMediaLibraryPermissionsAsync();
+            console.log('Gallery permission result:', permissionResult);
 
+            if (permissionResult.granted === false) {
+                toast.error('Permissão para acessar a galeria é necessária');
+                return;
+            }
+
+            console.log('Launching image library...');
+            let result = await ExpoImagePicker.launchImageLibraryAsync({
+                mediaTypes: ExpoImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                aspect: [16, 9], // Aspect ratio similar to ranking banners (140px height with full width)
+                quality: 0.8,
+                base64: false,
+                exif: false,
+                allowsMultipleSelection: false,
+                selectionLimit: 1,
+            });
+
+            console.log('Gallery result:', result);
+            await handleImageResult(result);
+        } catch (error) {
+            console.error('Gallery error:', error);
+            toast.error('Erro ao abrir a galeria');
+        }
+    }
+
+
+
+    async function handleImageResult(result: ExpoImagePicker.ImagePickerResult) {
         if (!result.canceled && result.assets && result.assets[0]) {
             const newImage: ItemImage = {
                 uri: result.assets[0].uri,
@@ -175,11 +202,31 @@ export default function CreateRankingItemScreen({ route }: CreateRankingItemScre
                         <View style={styles.imagesContainer}>
                             {images.map((image, index) => (
                                 <View key={image.uri} style={styles.imageItem}>
-                                    <Image
-                                        source={{ uri: image.uri }}
-                                        style={styles.imagePreview}
-                                        resizeMode="cover"
-                                    />
+                                    {!image.error ? (
+                                        <Image
+                                            source={{ uri: image.uri }}
+                                            style={styles.imagePreview}
+                                            resizeMode="cover"
+                                            onError={(error) => {
+                                                console.warn('Image loading error:', error);
+                                                setImages(prev => prev.map(img =>
+                                                    img.uri === image.uri
+                                                        ? { ...img, error: true }
+                                                        : img
+                                                ));
+                                            }}
+                                            onLoad={() => {
+                                                console.log('Image loaded successfully');
+                                            }}
+                                        />
+                                    ) : (
+                                        <View style={styles.imageErrorContainer}>
+                                            <ImageIcon size={32} color={Colors.textHiglight} weight="light" />
+                                            <NormalText style={styles.imageErrorText}>
+                                                Erro ao carregar
+                                            </NormalText>
+                                        </View>
+                                    )}
                                     {image.loading && (
                                         <View style={styles.loadingOverlay}>
                                             <NormalText style={styles.loadingText}>
@@ -260,14 +307,27 @@ const styles = StyleSheet.create({
     },
     imageItem: {
         position: 'relative',
-        width: 100,
-        height: 100,
+        width: 120,
+        height: 80,
         borderRadius: 12,
         overflow: 'hidden',
     },
     imagePreview: {
         width: '100%',
         height: '100%',
+    },
+    imageErrorContainer: {
+        width: '100%',
+        height: '100%',
+        backgroundColor: Colors.background,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    imageErrorText: {
+        marginTop: 4,
+        fontSize: 10,
+        color: Colors.textHiglight,
+        textAlign: 'center',
     },
     loadingOverlay: {
         position: 'absolute',
