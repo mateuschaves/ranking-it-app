@@ -9,6 +9,7 @@ import { RootStackParamList } from './navigation.type';
 import BottomNavigation from "~/navigation/Bottom.navigation";
 import ProfilePhotoScreen from '~/screens/Core/ProfilePhotoScreen';
 import UserPendingInvitesScreen from '~/screens/Core/UserPendingInvitesScreen';
+import NotificationTest from '~/components/NotificationTest';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -40,6 +41,17 @@ function PrivateStack() {
           headerShown: true,
           headerTransparent: true,
           headerTitle: '',
+          headerBackVisible: false,
+          headerLeft: () => <CustomBackButton />,
+        }}
+      />
+      <Stack.Screen
+        name="NotificationTestScreen"
+        component={NotificationTest}
+        options={{
+          headerShown: true,
+          headerTransparent: true,
+          headerTitle: 'Notification Test',
           headerBackVisible: false,
           headerLeft: () => <CustomBackButton />,
         }}

@@ -42,7 +42,15 @@
           "cameraPermission": "This app needs access to your camera to let you take photos for ranking items."
         }
       ],
-      "expo-asset"
+      "expo-asset",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#EDEAE4",
+          "defaultChannel": "default"
+        }
+      ]
     ],
     "extra": {
       "eas": {
