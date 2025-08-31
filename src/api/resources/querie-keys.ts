@@ -13,4 +13,5 @@ export enum QuerieKeys {
   GetRankingItemsScores = 'GET_RANKING_ITEMS_SCORES',
   GetRankingCriteria = 'GET_RANKING_CRITERIA',
   InviteUserToRanking = 'INVITE_USER_TO_RANKING',
+  UpdateUserPushToken = 'UPDATE_USER_PUSH_TOKEN',
 }

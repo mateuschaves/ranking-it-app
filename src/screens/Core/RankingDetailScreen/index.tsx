@@ -27,6 +27,7 @@ import { useMutation } from '@tanstack/react-query';
 import constants from '~/config/consts';
 import navigationService from '~/services/navigation.service';
 import { RootStackParamList } from '~/navigation/navigation.type';
+import notificationService from '~/services/notification.service';
 
 const HEADER_MAX_HEIGHT = 280;
 const HEADER_MIN_HEIGHT = 60;
@@ -94,6 +95,16 @@ export default function RankingDetailScreen() {
 
   async function handleInviteUser(email: string) {
     await inviteUserToRankingFn({ email, rankingId: item.id });
+
+    // Send a local notification about the invitation
+    try {
+      await notificationService.sendRankingInviteNotification(
+        item.name,
+        'You' // In a real app, you'd get the current user's name
+      );
+    } catch (error) {
+      console.log('Failed to send notification:', error);
+    }
   }
 
   const headerImageUri = item.banner || 'https://via.placeholder.com/400x280/EDEAE4/999999?text=Sem+Imagem'

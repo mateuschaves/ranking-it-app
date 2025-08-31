@@ -41,6 +41,9 @@ export default function ProfileScreen() {
     function handlePendingInvites() {
         navigationService.navigate('UserPendingInvitesScreen');
     }
+    function handleNotificationTest() {
+        navigationService.navigate('NotificationTestScreen');
+    }
     function handleLogout() {
         Alert.alert(
             'Sair',
@@ -173,6 +176,23 @@ export default function ProfileScreen() {
                                         <NormalText style={styles.badgeText}>{userContext.pendingInvitesCount}</NormalText>
                                     </View>
                                 )}
+                                <CaretRight size={20} color={Colors.textHiglight} />
+                            </View>
+                        </TouchableOpacity>
+
+                        <Divider />
+
+                        <TouchableOpacity style={styles.option} onPress={handleNotificationTest} activeOpacity={0.8}>
+                            <View style={styles.optionLeft}>
+                                <View style={styles.optionIcon}>
+                                    <Bell size={20} color={Colors.darkTint} weight="bold" />
+                                </View>
+                                <View style={styles.optionTextContainer}>
+                                    <NormalText style={styles.optionTitle}>Testar Notificações</NormalText>
+                                    <NormalText style={styles.optionSubtitle}>Teste as notificações do app</NormalText>
+                                </View>
+                            </View>
+                            <View style={styles.optionRight}>
                                 <CaretRight size={20} color={Colors.textHiglight} />
                             </View>
                         </TouchableOpacity>
