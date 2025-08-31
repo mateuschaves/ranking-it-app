@@ -13,7 +13,7 @@ import { useMutation } from '@tanstack/react-query'
 import { CreateRanking, CreateRankingResponse } from '~/api/resources/core/create-ranking'
 import { QuerieKeys } from '~/api/resources/querie-keys'
 import { toast } from 'sonner-native'
-import { View, StyleSheet, ActivityIndicator } from 'react-native'
+import { View, StyleSheet, ActivityIndicator, ScrollView } from 'react-native'
 import ImagePicker from '~/components/ImagePicker'
 import * as ExpoImagePicker from 'expo-image-picker'
 import { hapticFeedback, HapticsType } from '~/utils/feedback'
@@ -362,9 +362,17 @@ export default function CreateRankingScreen() {
             backgroundColor: 'black'
           }
         }}>
-          <View style={{ flex: 1, justifyContent: 'space-between', alignContent: 'space-between' }}>
+          <View style={{ flex: 1 }}>
             <TextTitle fontWeight={theme.weights.lg}>Escolha alguns critérios 🕵</TextTitle>
-            <View style={{ flex: 1, alignItems: 'center' }}>
+
+            <ScrollView
+              style={{ flex: 1 }}
+              contentContainerStyle={{
+                paddingBottom: 120, // Espaço para o botão + bottom navigation
+                paddingTop: theme.padding.sm
+              }}
+              showsVerticalScrollIndicator={false}
+            >
               <View style={{
                 flexDirection: 'row',
                 flexWrap: 'wrap',
@@ -405,8 +413,9 @@ export default function CreateRankingScreen() {
                   />
                 </Show>
               </View>
-            </View>
-            <View style={{ flex: 1, alignContent: 'flex-end', marginTop: 100 }}>
+            </ScrollView>
+
+            <View style={styles.finishButtonContainer}>
               <Button
                 title='Finalizar'
                 iconLeft={<Check color={Colors.white} />}
@@ -447,6 +456,17 @@ const styles = StyleSheet.create({
     padding: 36,
     borderRadius: 8,
     marginBottom: 200,
-    backgroundColor: Colors.white,
+  },
+  finishButtonContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: Colors.background,
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+    paddingBottom: 32, // Espaço extra para o bottom navigation
+    borderTopWidth: 1,
+    borderTopColor: Colors.tint,
   },
 })

@@ -16,7 +16,9 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.wazowsky.rankingit",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSPhotoLibraryUsageDescription": "This app needs access to your photo library to let you select and upload images for ranking items.",
+        "NSCameraUsageDescription": "This app needs access to your camera to let you take photos for ranking items."
       }
     },
     "android": {
@@ -36,7 +38,8 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "The app accesses your photos to let you share them with your friends."
+          "photosPermission": "This app needs access to your photos to let you select and upload images for ranking items.",
+          "cameraPermission": "This app needs access to your camera to let you take photos for ranking items."
         }
       ],
       "expo-asset"

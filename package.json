@@ -26,6 +26,7 @@
     "expo-image-picker": "~16.0.6",
     "expo-insights": "~0.8.2",
     "expo-linear-gradient": "~14.0.2",
+    "expo-splash-screen": "~0.29.24",
     "expo-status-bar": "~2.0.1",
     "lottie-react-native": "7.1.0",
     "lucide-react-native": "^0.540.0",

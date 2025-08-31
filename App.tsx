@@ -2,6 +2,7 @@ import './src/config/reactotron';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import * as SplashScreen from 'expo-splash-screen';
 
 import RootStack from "~/navigation/RootStack.navigation";
 import { queryClient } from "~/lib/react-query";
@@ -12,6 +13,10 @@ import { ThemeProvider } from "styled-components";
 import theme from "~/theme";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { UserProvider } from "~/context/UserContext";
+
+// Prevent the splash screen from auto-hiding before App component declaration
+SplashScreen.preventAutoHideAsync();
+console.log('🚀 App started, splash screen prevented from auto-hiding');
 
 export default function App() {
     return (
