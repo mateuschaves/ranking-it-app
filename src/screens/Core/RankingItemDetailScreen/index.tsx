@@ -59,9 +59,18 @@ export default function RankingItemDetailScreen() {
                                         </TextTitle>
                                     </View>
                                     <View style={styles.averageContainer}>
-                                        <NormalText style={styles.averageText}>
-                                            {(rankingItemsScoresGroupedByCriteria[criteriaId].reduce((sum, item) => sum + item.score, 0) / rankingItemsScoresGroupedByCriteria[criteriaId].length).toFixed(1)}
-                                        </NormalText>
+                                        {rankingItemsScoresGroupedByCriteria[criteriaId].length > 0 ? (
+                                            <>
+                                                <Star size={16} color={Colors.darkTint} weight="fill" />
+                                                <NormalText style={styles.averageText}>
+                                                    {(rankingItemsScoresGroupedByCriteria[criteriaId].reduce((sum, item) => sum + item.score, 0) / rankingItemsScoresGroupedByCriteria[criteriaId].length).toFixed(1)}
+                                                </NormalText>
+                                            </>
+                                        ) : (
+                                            <NormalText style={styles.noScoreText}>
+                                                Não avaliado
+                                            </NormalText>
+                                        )}
                                     </View>
                                 </View>
 
@@ -177,6 +186,13 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '700',
         color: Colors.white,
+        marginLeft: 4,
+    },
+    noScoreText: {
+        fontSize: 14,
+        fontWeight: '500',
+        color: Colors.textHiglight,
+        fontStyle: 'italic',
     },
     scoreCard: {
         backgroundColor: Colors.white,

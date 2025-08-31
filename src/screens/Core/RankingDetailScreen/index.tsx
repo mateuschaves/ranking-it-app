@@ -185,10 +185,18 @@ export default function RankingDetailScreen() {
                   </View>
 
                   <View style={styles.itemScore}>
-                    <Star size={16} color={Colors.darkTint} weight="fill" />
-                    <NormalText style={styles.scoreText}>
-                      {rankingItem.score ? rankingItem.score.toFixed(1) : '0.0'}
-                    </NormalText>
+                    {rankingItem.score && rankingItem.score > 0 ? (
+                      <>
+                        <Star size={16} color={Colors.darkTint} weight="fill" />
+                        <NormalText style={styles.scoreText}>
+                          {rankingItem.score.toFixed(1)}
+                        </NormalText>
+                      </>
+                    ) : (
+                      <NormalText style={styles.noScoreText}>
+                        Não avaliado
+                      </NormalText>
+                    )}
                   </View>
 
                   <CaretRight size={20} color={Colors.darkTint} weight="bold" />
@@ -373,6 +381,12 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: Colors.darkTint,
     marginLeft: 4,
+  },
+  noScoreText: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: Colors.textHiglight,
+    fontStyle: 'italic',
   },
   emptyState: {
     alignItems: 'center',
