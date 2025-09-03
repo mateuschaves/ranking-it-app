@@ -12,7 +12,7 @@ import { getImageUrl } from '~/utils/image'
 import { captalizeFirstLetter } from '~/utils/general'
 import { PlusCircle, User, Star } from 'phosphor-react-native'
 import navigationService from '~/services/navigation.service'
-import CachedImage from 'expo-cached-image'
+import { Image } from 'react-native'
 import { TextTitle } from '~/components/Typography/TextTitle'
 import { NormalText } from '~/components/Typography/NormalText'
 
@@ -78,16 +78,9 @@ export default function RankingItemDetailScreen() {
                                     <View key={item.id} style={styles.scoreCard}>
                                         <View style={styles.userSection}>
                                             {item.user.avatar.url ? (
-                                                <CachedImage
+                                                <Image
                                                     source={{ uri: item.user.avatar.url }}
                                                     style={styles.userAvatar}
-                                                    cacheKey={`user-avatar-${item.user.id}`}
-                                                    placeholderContent={(
-                                                        <ActivityIndicator
-                                                            color={Colors.white}
-                                                            size="small"
-                                                        />
-                                                    )}
                                                     resizeMode="cover"
                                                 />
                                             ) : (

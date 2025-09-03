@@ -12,7 +12,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomSheet, { BottomSheetMethods } from '@devvie/bottom-sheet';
 import { useUserContext } from '~/context/UserContext';
 import Colors from '~/theme/colors';
-import CachedImage from 'expo-cached-image';
+import { Image } from 'react-native';
 import constants from '~/config/consts';
 import Loading from '~/components/Loading';
 
@@ -100,10 +100,9 @@ export default function HomeScreen() {
                                 >
                                     <View style={styles.cardHeader}>
                                         {item.banner ? (
-                                            <CachedImage
-                                                source={{ uri: item.banner, expiresIn: 10 }}
+                                            <Image
+                                                source={{ uri: item.banner }}
                                                 style={styles.banner}
-                                                cacheKey={`ranking-banner-${item.banner}`}
                                                 resizeMode="cover"
                                             />
                                         ) : (
@@ -116,10 +115,9 @@ export default function HomeScreen() {
                                     <View style={styles.cardBody}>
                                         <View style={styles.creatorInfo}>
                                             {item.createdBy?.avatar?.url ? (
-                                                <CachedImage
+                                                <Image
                                                     source={{ uri: item.createdBy.avatar.url }}
                                                     style={styles.creatorAvatar}
-                                                    cacheKey={`creator-avatar-${item.createdBy.id}`}
                                                     resizeMode="cover"
                                                 />
                                             ) : (

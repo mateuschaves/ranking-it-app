@@ -1,5 +1,5 @@
 import Styled from 'styled-components/native';
-import CachedImage from 'expo-cached-image'
+import { Image } from 'react-native';
 
 export const Container = Styled.TouchableOpacity`
   flex-direction: column;
@@ -7,7 +7,7 @@ export const Container = Styled.TouchableOpacity`
   margin-bottom: 20px;
 `;
 
-export const RankingBanner = Styled(CachedImage)`    
+export const RankingBanner = Styled(Image)`    
     width: 100%;
     height: 140px;
     border-top-left-radius: 10px;

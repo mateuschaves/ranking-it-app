@@ -16,7 +16,7 @@ import { GetRankingItems } from '~/api/resources/core/get-ranking-items';
 import { QuerieKeys } from '~/api/resources/querie-keys';
 import { CaretRight, PlusCircle, UserPlus, Star, Trophy } from 'phosphor-react-native';
 import Whitespace from '~/components/Whitespace';
-import CachedImage from 'expo-cached-image';
+import { Image } from 'react-native';
 import { ActivityIndicator } from 'react-native';
 import Colors from '~/theme/colors';
 import InviteUserModal from '~/components/InviteUserModal/index';
@@ -238,16 +238,8 @@ export default function RankingDetailScreen() {
           styles.headerImageContainer,
           { opacity: headerOpacity, transform: [{ translateY: imageTranslate }] },
         ]}>
-          <CachedImage
+          <Image
             style={styles.headerImage}
-            cacheKey={`ranking-detail-banner-${item.banner || 'placeholder'}`}
-            placeholderContent={(
-              <ActivityIndicator
-                color={Colors.white}
-                size="large"
-                style={{ flex: 1, justifyContent: "center" }}
-              />
-            )}
             source={{ uri: headerImageUri }}
             resizeMode="cover"
             onError={(error: any) => {

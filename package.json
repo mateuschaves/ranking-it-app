@@ -21,7 +21,6 @@
     "babel-plugin-module-resolver": "^5.0.2",
     "expo": "~52.0.39",
     "expo-asset": "~11.0.5",
-    "expo-cached-image": "^52.0.40",
     "expo-constants": "~17.0.8",
     "expo-device": "~7.0.3",
     "expo-haptics": "^14.0.1",
