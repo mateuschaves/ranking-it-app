@@ -3171,13 +3171,6 @@ expo-asset@~11.0.5:
     invariant "^2.2.4"
     md5-file "^3.2.3"
 
-expo-cached-image@^52.0.40:
-  version "52.0.40"
-  resolved "https://registry.yarnpkg.com/expo-cached-image/-/expo-cached-image-52.0.40.tgz#7ec5f88374f9d5cd4955d965a7a71c0e896dda07"
-  integrity sha512-S0ZmiW3rv54TLcheAUBLw15/oCO68Uh0ehjM0ae62PmqwB95qO5JnG1G/YxO7u5R072n/95dowMb6es5bFbPfg==
-  dependencies:
-    expo "~52.0.40"
-
 expo-constants@~17.0.8:
   version "17.0.8"
   resolved "https://registry.yarnpkg.com/expo-constants/-/expo-constants-17.0.8.tgz#d7a21ec6f1f4834ea25aa645be20292ef99c0b81"
@@ -3292,7 +3285,7 @@ expo-status-bar@~2.0.1:
   resolved "https://registry.yarnpkg.com/expo-status-bar/-/expo-status-bar-2.0.1.tgz#fc07726346dc30fbb68aadb0d7890b34fba42eee"
   integrity sha512-AkIPX7jWHRPp83UBZ1iXtVvyr0g+DgBVvIXTtlmPtmUsm8Vq9Bb5IGj86PW8osuFlgoTVAg7HI/+Ok7yEYwiRg==
 
-expo@~52.0.39, expo@~52.0.40:
+expo@~52.0.39:
   version "52.0.47"
   resolved "https://registry.yarnpkg.com/expo/-/expo-52.0.47.tgz#b2a25bdcbd2059094396750e896946d2e2e61753"
   integrity sha512-Mkvl7Qi2k+V3FdNRUD+yDj8GqU4IiYulLfl36BmSZs8lh/kCYPhTiyBLiEGPfz7d25QKbPWG727ESozbkbvatw==

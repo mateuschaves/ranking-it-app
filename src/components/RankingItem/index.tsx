@@ -21,17 +21,6 @@ export default function RankingItem({ onPress, title, photo, onLongPress }: Rank
         <Styles.Container onPress={onPress} onLongPress={onLongPress}>
             <LinearGradient colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 1)']}>
                 <Styles.RankingBanner
-                    cachePolicy="memory-disk"
-                    cacheControl="immutable"
-                    cacheControlExpiry={1000 * 60 * 60 * 24 * 30} // 30 days instead of 7
-                    cacheKey={`ranking-banner-${photo?.name || 'placeholder'}`}
-                    placeholderContent={(
-                        <ActivityIndicator
-                            color={Colors.darkTint}
-                            size="small"
-                            style={{ flex: 1, justifyContent: "center" }}
-                        />
-                    )}
                     source={{
                         uri: photoFormated,
                     }}

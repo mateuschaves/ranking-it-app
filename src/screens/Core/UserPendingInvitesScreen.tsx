@@ -3,7 +3,7 @@ import { FlatList, View, StyleSheet, TouchableOpacity, ActivityIndicator } from 
 import { Container } from '~/components/BaseScreen';
 import { TextTitle } from '~/components/Typography/TextTitle';
 import { NormalText } from '~/components/Typography/NormalText';
-import OptimizedCachedImage from '~/components/CachedImage';
+import { Image } from 'react-native';
 import { User, Calendar, Check, X, Users, Star } from 'phosphor-react-native';
 import { acceptInvite } from '~/api/resources/core/accept-invite';
 import { declineInvite } from '~/api/resources/core/decline-invite';
@@ -161,10 +161,9 @@ export default function UserPendingInvitesScreen() {
                         <View style={styles.cardHeader}>
                             <View style={styles.userSection}>
                                 {item.inviterAvatarPath ? (
-                                    <OptimizedCachedImage
-                                        uri={getImageUrl(item.inviterAvatarPath)}
+                                    <Image
+                                        source={{ uri: getImageUrl(item.inviterAvatarPath) }}
                                         style={styles.avatar}
-                                        cacheKey={`inviter-avatar-${item.id}`}
                                         resizeMode="cover"
                                     />
                                 ) : (

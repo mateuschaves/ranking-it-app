@@ -6,7 +6,7 @@ import { TextTitle } from '~/components/Typography/TextTitle';
 import { NormalText } from '~/components/Typography/NormalText';
 import theme from '~/theme';
 import Colors from '~/theme/colors';
-import CachedImage from 'expo-cached-image';
+
 import { PencilSimple, CaretRight, User, Gear, Bell, SignOut } from 'phosphor-react-native';
 import Divider from '~/components/Divider';
 import { asyncStorage, StorageKeys } from '~/shared/storage_service';

@@ -37,7 +37,6 @@ class NotificationService {
       });
     }
 
-    if (Device.isDevice) {
       const { status: existingStatus } = await Notifications.getPermissionsAsync();
       let finalStatus = existingStatus;
       
@@ -72,9 +71,6 @@ class NotificationService {
         console.error('Error getting Expo push token:', error);
         return null;
       }
-    } else {
-      console.log('Must use physical device for Push Notifications');
-    }
 
     return token;
   }
