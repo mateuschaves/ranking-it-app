@@ -18,7 +18,16 @@
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSPhotoLibraryUsageDescription": "This app needs access to your photo library to let you select and upload images for ranking items.",
-        "NSCameraUsageDescription": "This app needs access to your camera to let you take photos for ranking items."
+        "NSCameraUsageDescription": "This app needs access to your camera to let you take photos for ranking items.",
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": false,
+          "NSExceptionDomains": {
+            "ranking-attachments.s3.us-east-1.amazonaws.com": {
+              "NSIncludesSubdomains": true,
+              "NSTemporaryExceptionAllowsInsecureHTTPLoads": true
+            }
+          }
+        }
       }
     },
     "android": {
