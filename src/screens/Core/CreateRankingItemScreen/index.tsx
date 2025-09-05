@@ -165,10 +165,11 @@ export default function CreateRankingItemScreen({ route }: CreateRankingItemScre
         }
 
         try {
+            console.log(images)
             await CreateRankingItemFn({
                 name: itemName.trim(),
                 rankingId,
-                imageIds: images.map(img => img.uploaded?.id).filter(Boolean) as string[],
+                photos: images.map(img => img.uploaded?.id).filter(id => id) as string[],
             })
         } catch (error) {
             console.error('Error in handleCreateRankingItem:', error)

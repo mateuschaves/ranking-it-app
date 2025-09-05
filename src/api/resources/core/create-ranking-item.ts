@@ -3,7 +3,7 @@ import { api } from '~/lib/axios'
 export interface CreateRankingItemRequest {
     name:           string;
     rankingId:      string;
-    imageIds?:      string[];
+    photos?:        string[];
 }
 
 export interface CreateRankingItemResponse {
@@ -12,7 +12,7 @@ export interface CreateRankingItemResponse {
     description?: string;
     rankingId:   string;
     createdById: string;
-    photo:       string | null;
+    photos:       string[] | null;
     latitude:    number | null;
     longitude:   number | null;
     link:        string | null;
@@ -25,7 +25,7 @@ export async function CreateRankingItem(request: CreateRankingItemRequest): Prom
         `/rankings/${request.rankingId}/items`,
         {
             name: request.name,
-            imageIds: request.imageIds,
+            photos: request.photos,
         },
     ).then(res => res.data)
 }

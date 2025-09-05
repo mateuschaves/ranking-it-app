@@ -28,6 +28,8 @@ import constants from '~/config/consts';
 import navigationService from '~/services/navigation.service';
 import { RootStackParamList } from '~/navigation/navigation.type';
 import notificationService from '~/services/notification.service';
+import { LinearGradient } from 'expo-linear-gradient';
+import { getImageUrl } from '~/utils/image';
 
 const HEADER_MAX_HEIGHT = 280;
 const HEADER_MIN_HEIGHT = 60;
@@ -107,7 +109,7 @@ export default function RankingDetailScreen() {
     }
   }
 
-  const headerImageUri = item.banner || 'https://via.placeholder.com/400x280/EDEAE4/999999?text=Sem+Imagem'
+  const headerImageUri = getImageUrl(item.banner) || 'https://via.placeholder.com/400x280/EDEAE4/999999?text=Sem+Imagem'
 
   return (
     <View style={styles.container}>
@@ -185,11 +187,11 @@ export default function RankingDetailScreen() {
                   </View>
 
                   <View style={styles.itemInfo}>
-                    <TextTitle style={styles.itemName}>
+                    <TextTitle style={styles.itemName} numberOfLines={1} ellipsizeMode="tail">
                       {rankingItem.name || 'Sem nome'}
                     </TextTitle>
                     {rankingItem.description && (
-                      <NormalText style={styles.itemDescription}>
+                      <NormalText style={styles.itemDescription} numberOfLines={1} ellipsizeMode="tail">
                         {rankingItem.description}
                       </NormalText>
                     )}
@@ -246,7 +248,10 @@ export default function RankingDetailScreen() {
               console.warn('Header image loading error:', error);
             }}
           />
-          <View style={styles.headerOverlay} />
+          <LinearGradient
+            colors={["rgba(0,0,0,0.0)", "rgba(0,0,0,0.2)", "rgba(0,0,0,0.35)"]}
+            style={styles.headerOverlay}
+          />
         </Animated.View>
       </Animated.View>
 
@@ -289,15 +294,15 @@ const styles = StyleSheet.create({
   },
   actionsSection: {
     flexDirection: 'row',
+    alignItems: 'center',
     gap: 8,
-    marginBottom: 8,
+    marginBottom: 12,
   },
   actionButton: {
-    flex: 1,
     backgroundColor: Colors.background,
-    borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    borderRadius: 24,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -310,7 +315,7 @@ const styles = StyleSheet.create({
   },
   actionButtonText: {
     color: Colors.darkTint,
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '600',
     marginLeft: 6,
   },
@@ -328,14 +333,14 @@ const styles = StyleSheet.create({
   },
   itemCard: {
     backgroundColor: Colors.white,
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 12,
+    borderRadius: 14,
+    padding: 14,
+    marginBottom: 8,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 2,
   },
   itemHeader: {
     flexDirection: 'row',
@@ -343,44 +348,44 @@ const styles = StyleSheet.create({
   },
   positionBadge: {
     backgroundColor: Colors.darkTint,
-    borderRadius: 20,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    marginRight: 16,
-    minWidth: 40,
+    borderRadius: 14,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    marginRight: 12,
+    minWidth: 32,
     alignItems: 'center',
   },
   positionText: {
     color: Colors.white,
-    fontSize: 16,
+    fontSize: 13,
     fontWeight: '700',
   },
   itemInfo: {
     flex: 1,
-    marginRight: 16,
+    marginRight: 12,
   },
   itemName: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '600',
     color: Colors.darkTint,
-    marginBottom: 4,
+    marginBottom: 0,
   },
   itemDescription: {
-    fontSize: 14,
+    fontSize: 12,
     color: Colors.textHiglight,
-    lineHeight: 18,
+    lineHeight: 16,
   },
   itemScore: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colors.background,
-    borderRadius: 12,
+    borderRadius: 10,
     paddingHorizontal: 8,
-    paddingVertical: 4,
-    marginRight: 12,
+    paddingVertical: 2,
+    marginRight: 8,
   },
   scoreText: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '700',
     color: Colors.darkTint,
     marginLeft: 4,
