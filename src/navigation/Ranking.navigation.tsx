@@ -1,7 +1,7 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { TouchableOpacity } from 'react-native';
-import { ArrowLeft } from 'phosphor-react-native';
+import { ArrowLeft, PencilSimple } from 'phosphor-react-native';
 import { useNavigation } from '@react-navigation/native';
 import Colors from '~/theme/colors';
 
@@ -12,11 +12,12 @@ import RankingDetailScreen from '~/screens/Core/RankingDetailScreen';
 import RankingItemDetailScreen from '~/screens/Core/RankingItemDetailScreen';
 import CreateRankingItemScoreScreen from '~/screens/Core/CreateRankingItemScoreScreen';
 import CreateRankingItemScreen from '~/screens/Core/CreateRankingItemScreen';
+import EditRankingItemScreen from '~/screens/Core/EditRankingItemScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 // Componente separado para o header personalizado
-function CustomBackButton() {
+function CustomBackButton({ color = Colors.darkTint }: { color?: string }) {
   const navigation = useNavigation();
 
   return (
@@ -24,7 +25,7 @@ function CustomBackButton() {
       style={{ marginLeft: 8 }}
       onPress={() => navigation.goBack()}
     >
-      <ArrowLeft size={24} color={Colors.darkTint} weight="bold" />
+      <ArrowLeft size={24} color={color} weight="bold" />
     </TouchableOpacity>
   );
 }
@@ -42,7 +43,7 @@ function RankingNavigation() {
       <Stack.Screen name="CreateRankingScreen" component={CreateRankingScreen} />
       <Stack.Screen name="RankingDetailScreen" component={RankingDetailScreen} options={{
         headerBackVisible: false,
-        headerLeft: () => <CustomBackButton />,
+        headerLeft: () => <CustomBackButton color={Colors.white} />,
       }} />
       <Stack.Screen name="CreateRankingItemScreen" component={CreateRankingItemScreen} options={{
         headerBackVisible: false,
@@ -50,15 +51,36 @@ function RankingNavigation() {
         title: 'Adicionar Item',
         headerTitle: 'Adicionar Item',
       }} />
-      <Stack.Screen name="RankingItemDetailScreen" component={RankingItemDetailScreen} options={{
-        presentation: 'modal',
-        title: 'Pontuação',
-        headerTitle: 'Pontuação',
-      }} />
+      <Stack.Screen
+        name="RankingItemDetailScreen"
+        component={RankingItemDetailScreen}
+        options={({ navigation, route }) => ({
+          presentation: 'modal',
+          title: 'Item do ranking',
+          headerTitle: 'Item do ranking',
+          headerRight: () => (
+            <TouchableOpacity
+              style={{ marginRight: 8 }}
+              onPress={() => navigation.navigate('EditRankingItemScreen', {
+                rankingItemId: (route as any).params?.rankingItemId,
+                rankingId: (route as any).params?.rankingId,
+              })}
+              accessibilityLabel="Editar item"
+            >
+              <PencilSimple size={20} color={Colors.darkTint} weight="bold" />
+            </TouchableOpacity>
+          ),
+        })}
+      />
       <Stack.Screen name="CreateRankingItemScoreScreen" component={CreateRankingItemScoreScreen} options={{
         presentation: 'modal',
         title: 'Adicionar pontuação',
         headerTitle: 'Adicionar pontuação',
+      }} />
+      <Stack.Screen name="EditRankingItemScreen" component={EditRankingItemScreen} options={{
+        presentation: 'modal',
+        title: 'Editar item',
+        headerTitle: 'Editar item',
       }} />
     </Stack.Navigator>
   );

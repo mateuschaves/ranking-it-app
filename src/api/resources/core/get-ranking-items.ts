@@ -1,4 +1,5 @@
 import constants from '~/config/consts';
+import { getImageUrl } from '~/utils/image';
 import { api } from '~/lib/axios'
 
 export interface GetRankingItemsRequest {
@@ -64,7 +65,7 @@ export async function GetRankingItems(request: GetRankingItemsRequest): Promise<
             avatar: {
                 ...item.createdByUser.avatar,
                 uri: item.createdByUser.avatar.url
-                ? `${constants.bucketUrl}/${item.createdByUser.avatar.url}`
+                ? getImageUrl(item.createdByUser.avatar.url)
                 : undefined,
             }
         },
@@ -73,7 +74,7 @@ export async function GetRankingItems(request: GetRankingItemsRequest): Promise<
             photo: {
                 ...photo.photo,
                 uri: photo.photo.url
-                    ? `${constants.bucketUrl}/${photo.photo.url}`
+                    ? getImageUrl(photo.photo.url)
                     : undefined,
             }
         }))
